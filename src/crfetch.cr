@@ -2,9 +2,9 @@ require "process"
 
 module Manip
   def self.bytesToMebibytes(bytes : String) : String
-    # Implement turning bytes into Megabytes
-    megabyte = 1048576
-    bytes = bytes.strip.to_f / megabyte
+    # Implement turning bytes into Mebibytes
+    mebibyte = 1048576
+    bytes = bytes.strip.to_f / mebibyte
 
     "%.2f" % bytes
   end
@@ -46,7 +46,7 @@ module Crfetch
     os = getPlatform
     case os
     when /Linux/
-      memory = self.runSysCommand("free -b | grep Mem | awk '{print $4}'")
+      memory = self.runSysCommand("free -b | grep Mem | awk '{print $2}'")
     when "macOS"
       memory = self.runSysCommand("sysctl -n hw.memsize")
     when /BSD/
