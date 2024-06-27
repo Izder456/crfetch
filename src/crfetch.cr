@@ -24,7 +24,7 @@ module Resource
     # Implement getting system platform
     case os = self.runSysCommand("uname").strip
     when /Linux/
-      match = runSysCommand("cat /etc/os-release | grep PRETTY_NAME | cut -d = -f 2")
+      match = runSysCommand("grep PRETTY_NAME /etc/os-release | cut -d = -f 2")
       "Linux #{match}"
     when /FreeBSD/
       "FreeBSD"
@@ -52,7 +52,7 @@ module Resource
     os = getPlatform
     case os
     when /Linux/
-      memory = self.runSysCommand("free -b | grep Mem | awk '{print $2}'")
+      memory = self.runSysCommand("free -b | awk '/Mem/ {print $2}'")
     when /BSD/
       memory = self.runSysCommand("sysctl -n hw.physmem")
     else
@@ -67,7 +67,7 @@ module Resource
     os = getPlatform
     case os
     when /Linux/
-      used_memory = runSysCommand("free -b | grep Mem | awk '{print $3}'")
+      used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'")
     when /BSD/
       used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
     else
