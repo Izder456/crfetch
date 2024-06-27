@@ -86,10 +86,6 @@ module Resource
       match = cpu_info.match(/model\ name\s+:\s+(.+)/)
 
       match[1] if match
-    when "macOS"
-      cpu_info = runSysCommand("sysctl -n machdep.cpu.brand_string").strip
-
-      cpu_info unless cpu_info.empty?
     when /BSD/
       cpu_info = runSysCommand("sysctl -n hw.model").strip
 
