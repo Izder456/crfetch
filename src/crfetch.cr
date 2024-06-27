@@ -1,7 +1,7 @@
 require "process"
 
 module Manip
-  def self.bytesToMegabytes(bytes : String) : String
+  def self.bytesToMebibytes(bytes : String) : String
     # Implement turning bytes into Megabytes
     megabyte = 1048576
     bytes = bytes.strip.to_f / megabyte
@@ -41,14 +41,6 @@ module Crfetch
     end
   end
 
-  def self.bytesToMegabytes(bytes : String) : String
-    # Implement turning bytes into Megabytes
-    megabyte = 1048576
-    bytes = bytes.strip.to_f / megabyte
-
-    "%.2f" % bytes
-  end
-
   def self.getMemory : String?
     # Implement Getting Memory Usage
     os = getPlatform
@@ -63,7 +55,7 @@ module Crfetch
       memory = ""
     end
 
-    Manip.bytesToMegabytes(memory)
+    Manip.bytesToMebibytes(memory)
   end
 
   def self.getMemoryUsage : String?
@@ -80,7 +72,7 @@ module Crfetch
       used_memory = ""
     end
 
-    Manip.bytesToMegabytes(used_memory)
+    Manip.bytesToMebibytes(used_memory)
   end
 
   def self.getCpu : String?
@@ -112,5 +104,5 @@ mem = Crfetch.getMemory
 cpu = Crfetch.getCpu
 
 puts "OS:  #{os}"
-puts "MEM: #{mem_usage}/#{mem}MB"
+puts "MEM: #{mem_usage}/#{mem}MiB"
 puts "CPU: #{cpu}"
