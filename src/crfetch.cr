@@ -39,6 +39,11 @@ module Crfetch
     end
   end
 
+  def self.getRelease : String?
+    # Implement Getting Release Version
+    self.runSysCommand("uname -r")
+  end
+
   def self.getMemory : String?
     # Implement Getting Memory Usage
     os = getPlatform
@@ -93,10 +98,12 @@ module Crfetch
 end
 
 os = Crfetch.getPlatform
+release = Crfetch.getRelease
 mem_usage = Crfetch.getMemoryUsage
 mem = Crfetch.getMemory
 cpu = Crfetch.getCpu
 
 puts "OS:  #{os}"
+puts "VER: #{release}"
 puts "MEM: #{mem_usage}/#{mem}MiB"
 puts "CPU: #{cpu}"
