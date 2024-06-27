@@ -69,7 +69,7 @@ module Resource
     when /Linux/
       used_memory = runSysCommand("free -b | grep Mem | awk '{print $3}'")
     when /BSD/
-      used_memory = runSysCommand("vmstat -s | grep 'pages active' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*4096}'")
+      used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
     else
       used_memory = ""
     end
