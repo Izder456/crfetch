@@ -35,31 +35,27 @@ module Crfetch
   def self.getMemory : String?
     # Implement Getting Memory Usage
     os = getPlatform
-    memory_command = case os
-                     when "Linux"
-                       "vmstat -s | grep 'total memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*1024}'"
-                     when "macOS"
-                       "sysctl -n hw.memsize"
-                     when /BSD/
-                       "sysctl -n hw.physmem"
-                     else
-                       ""
-                     end
-
-    if memory_command.empty?
-      puts "Unsupported OS: #{os}"
+    case os
+    when /Linux/
+      memory = self.runSysCommand("vmstat -s | grep 'total memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*1024}'")
+    when "macOS"
+      memory = self.runSysCommand("sysctl -n hw.memsize")
+    when /BSD/
+      memory = self.runSysCommand("sysctl -n hw.physmem")
     else
-      megabyte = 1048576
-      memory = self.runSysCommand(memory_command).strip.to_f / megabyte
-      output = "%.2f" % memory
+      memory = ""
     end
+
+    megabyte = 1048576
+    memory = memory.strip.to_f / megabyte
+    output = "%.2f" % memory
   end
 
   def self.getMemoryUsage : String?
     # Implement getting memory usage
     os = getPlatform
     case os
-    when "Linux"
+    when /Linux/
       command = "vmstat -s | grep 'used memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1/1024}'"
       self.runSysCommand(command).strip
     when "macOS"
@@ -77,7 +73,7 @@ module Crfetch
     # Implement Getting CPU name
     os = getPlatform
     case os
-    when "Linux"
+    when /Linux/
       cpu_info = File.read("/proc/cpuinfo")
       match = cpu_info.match(/model\ name\s+:\s+(.+)/)
       match[1] if match
