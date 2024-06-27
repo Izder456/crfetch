@@ -7,6 +7,19 @@
 - [] Threading System Commands
 - [] ASCII art
 
+* Deps
+
+- Crystal >= 1.12.2
+
+* Usage
+
+#+BEGIN_SRC
+$ git clone https://github.com/izder456/crfetch
+$ cd crfetch
+$ shard build # installs static binary to ./bin/crfetch
+$ ./bin/crfetch
+#+END_SRC
+
 * License
 
 this program is ISC Licensed
