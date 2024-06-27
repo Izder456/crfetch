@@ -9,7 +9,7 @@
 ** Planned Feature List
 - =[*] Colorize output=
 - =[ ] Threading System Commands=
-- =[+] ASCII art=
+- =[*] ASCII art=
 
 * Deps
 
