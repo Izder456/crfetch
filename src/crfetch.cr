@@ -102,15 +102,19 @@ module Crfetch
   end
 end
 
-user = Crfetch.getUser
-os = Crfetch.getPlatform
-release = Crfetch.getRelease
-cpu = Crfetch.getCpu
-mem_usage = Crfetch.getMemoryUsage
-mem = Crfetch.getMemory
+def fetch
+  user = Crfetch.getUser
+  os = Crfetch.getPlatform
+  release = Crfetch.getRelease
+  cpu = Crfetch.getCpu
+  mem_usage = Crfetch.getMemoryUsage
+  mem = Crfetch.getMemory
 
-puts "USER: #{user}"
-puts "OS:   #{os}"
-puts "VER:  #{release}"
-puts "CPU:  #{cpu}"
-puts "MEM:  #{mem_usage}/#{mem}MiB"
+  puts "USER: #{user}"
+  puts "OS:   #{os}"
+  puts "VER:  #{release}"
+  puts "CPU:  #{cpu}"
+  puts "MEM:  #{mem_usage}/#{mem}MiB"
+end
+
+fetch
