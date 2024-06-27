@@ -1,5 +1,15 @@
 require "process"
 
+module Manip
+  def self.bytesToMegabytes(bytes : String) : String
+    # Implement turning bytes into Megabytes
+    megabyte = 1048576
+    bytes = bytes.strip.to_f / megabyte
+
+    "%.2f" % bytes
+  end
+end
+
 module Crfetch
   VERSION = "0.1.0"
 
@@ -31,6 +41,14 @@ module Crfetch
     end
   end
 
+  def self.bytesToMegabytes(bytes : String) : String
+    # Implement turning bytes into Megabytes
+    megabyte = 1048576
+    bytes = bytes.strip.to_f / megabyte
+
+    "%.2f" % bytes
+  end
+
   def self.getMemory : String?
     # Implement Getting Memory Usage
     os = getPlatform
@@ -45,9 +63,7 @@ module Crfetch
       memory = ""
     end
 
-    megabyte = 1048576
-    memory = memory.strip.to_f / megabyte
-    output = "%.2f" % memory
+    Manip.bytesToMegabytes(memory)
   end
 
   def self.getMemoryUsage : String?
@@ -64,9 +80,7 @@ module Crfetch
       used_memory = ""
     end
 
-    megabyte = 1048676
-    used_memory = used_memory.strip.to_f / megabyte
-    output = "%.2f" % used_memory
+    Manip.bytesToMegabytes(used_memory)
   end
 
   def self.getCpu : String?
@@ -76,12 +90,15 @@ module Crfetch
     when /Linux/
       cpu_info = File.read("/proc/cpuinfo")
       match = cpu_info.match(/model\ name\s+:\s+(.+)/)
+
       match[1] if match
     when "macOS"
       cpu_info = runSysCommand("sysctl -n machdep.cpu.brand_string").strip
+
       cpu_info unless cpu_info.empty?
     when /BSD/
       cpu_info = runSysCommand("sysctl -n hw.model").strip
+
       cpu_info unless cpu_info.empty?
     else
       nil
