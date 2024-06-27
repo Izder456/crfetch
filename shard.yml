@@ -1,0 +1,13 @@
+name: crfetch
+version: 0.1.0
+
+authors:
+  - izzy Meyer <izder456@disroot.org>
+
+targets:
+  crfetch:
+    main: src/crfetch.cr
+
+crystal: '>= 1.12.2'
+
+license: ISC
