@@ -28,8 +28,6 @@ module Crfetch
     when /Linux/
       match = runSysCommand("cat /etc/os-release | grep PRETTY_NAME | cut -d = -f 2")
       "Linux #{match}"
-    when /Darwin/
-      "macOS"
     when /FreeBSD/
       "FreeBSD"
     when /OpenBSD/
@@ -37,7 +35,7 @@ module Crfetch
     when /NetBSD/
       "NetBSD"
     else
-      "I dunno"
+      "Unsupported OS"
     end
   end
 
@@ -47,8 +45,6 @@ module Crfetch
     case os
     when /Linux/
       memory = self.runSysCommand("free -b | grep Mem | awk '{print $2}'")
-    when "macOS"
-      memory = self.runSysCommand("sysctl -n hw.memsize")
     when /BSD/
       memory = self.runSysCommand("sysctl -n hw.physmem")
     else
@@ -64,8 +60,6 @@ module Crfetch
     case os
     when /Linux/
       used_memory = runSysCommand("free -b | grep Mem | awk '{print $3}'")
-    when "macOS"
-      used_memory = runSysCommand("vm_stat | grep 'Pages active' | awk '{print $3}' | sed 's/\.$//' | awk '{printf \"%.2f\\n\", $1*4096}'")
     when /BSD/
       used_memory = runSysCommand("vmstat -s | grep 'pages active' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*4096}'")
     else
