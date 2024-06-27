@@ -44,6 +44,11 @@ module Crfetch
     self.runSysCommand("uname -r")
   end
 
+  def self.getUser : String?
+    # Implement Getting Username
+    self.runSysCommand("whoami")
+  end
+
   def self.getMemory : String?
     # Implement Getting Memory Usage
     os = getPlatform
@@ -97,13 +102,15 @@ module Crfetch
   end
 end
 
+user = Crfetch.getUser
 os = Crfetch.getPlatform
 release = Crfetch.getRelease
+cpu = Crfetch.getCpu
 mem_usage = Crfetch.getMemoryUsage
 mem = Crfetch.getMemory
-cpu = Crfetch.getCpu
 
-puts "OS:  #{os}"
-puts "VER: #{release}"
-puts "MEM: #{mem_usage}/#{mem}MiB"
-puts "CPU: #{cpu}"
+puts "USER: #{user}"
+puts "OS:   #{os}"
+puts "VER:  #{release}"
+puts "CPU:  #{cpu}"
+puts "MEM:  #{mem_usage}/#{mem}MiB"
