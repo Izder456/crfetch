@@ -7,7 +7,7 @@
 /a system fetching utility, written in crystal/
 
 ** Planned Feature List
-- =[ ] Colorize output=
+- =[*] Colorize output=
 - =[ ] Threading System Commands=
 - =[+] ASCII art=
 
