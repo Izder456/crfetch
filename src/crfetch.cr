@@ -108,11 +108,11 @@ def fetch
   mem_usage = Resource.getMemoryUsage
   mem = Resource.getMemory
 
-  puts "USER: #{user}"
-  puts "OS:   #{os}"
-  puts "VER:  #{release}"
-  puts "CPU:  #{cpu}"
-  puts "MEM:  #{mem_usage}/#{mem}MiB"
+  puts "    ,    USER: #{user}"
+  puts "   / \\   OS:   #{os}"
+  puts "  /   \\  VER:  #{release}"
+  puts " |     | CPU:  #{cpu}"
+  puts "  \\___/  MEM:  #{mem_usage}/#{mem}MiB"
 end
 
 fetch
