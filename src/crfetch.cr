@@ -16,8 +16,7 @@ module Crfetch
     # Implement getting system platform
     case os = self.runSysCommand("uname").strip
     when /Linux/
-      distro_info = File.read("/etc/os-release")
-      match = distro_info.match(/PRETTY_NAME\s+=\s+(.+)/)
+      match = runSysCommand("cat /etc/os-release | grep PRETTY_NAME | cut -d = -f 2")
       "Linux #{match}"
     when /Darwin/
       "macOS"
