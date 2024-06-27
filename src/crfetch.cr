@@ -10,9 +10,7 @@ module Manip
   end
 end
 
-module Crfetch
-  VERSION = "0.1.0"
-
+module Resource
   def self.runSysCommand(command : String) : String
     # Implement running system command and yoinking output
     output = IO::Memory.new
@@ -103,12 +101,12 @@ module Crfetch
 end
 
 def fetch
-  user = Crfetch.getUser
-  os = Crfetch.getPlatform
-  release = Crfetch.getRelease
-  cpu = Crfetch.getCpu
-  mem_usage = Crfetch.getMemoryUsage
-  mem = Crfetch.getMemory
+  user = Resource.getUser
+  os = Resource.getPlatform
+  release = Resource.getRelease
+  cpu = Resource.getCpu
+  mem_usage = Resource.getMemoryUsage
+  mem = Resource.getMemory
 
   puts "USER: #{user}"
   puts "OS:   #{os}"
