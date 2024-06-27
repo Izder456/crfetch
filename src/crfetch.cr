@@ -35,7 +35,7 @@ module Crfetch
     os = getPlatform
     memory_command = case os
                      when "Linux"
-                       "cat /proc/meminfo"
+                       "vmstat -s | grep 'total memory' | awk '{print $1}'"
                      when "macOS"
                        "sysctl -n hw.memsize"
                      when /BSD/
@@ -58,7 +58,7 @@ module Crfetch
     os = getPlatform
     case os
     when "Linux"
-      command = "free -m"
+      command = "vmstat -s | grep 'used memory' | awk '{print $1}'"
       self.runSysCommand(command).strip
     when "macOS"
       command = "vm_stat | grep 'Pages active' | awk '{print $3}' | sed 's/\.$//' | awk '{printf \"%.2f\\n\", $1*4096/1024/1024}'"
