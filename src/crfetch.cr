@@ -116,7 +116,7 @@ def fetch
   puts "#{blue}   / \\   #{reset}#{bold}OS#{reset}:   #{os}"
   puts "#{blue}  /   \\  #{reset}#{bold}VER#{reset}:  #{release}"
   puts "#{blue} |     | #{reset}#{bold}CPU#{reset}:  #{cpu}"
-  puts "#{blue}  \\___/  #{reset}#{bold}MEM#{reset}:  #{mem_usage}/#{mem}MiB"
+  puts "#{blue}  \\___/  #{reset}#{bold}MEM#{reset}:  #{mem_usage} MiB/#{mem} MiB"
 end
 
 fetch
