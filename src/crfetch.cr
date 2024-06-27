@@ -36,7 +36,7 @@ module Crfetch
     os = getPlatform
     case os
     when /Linux/
-      memory = self.runSysCommand("vmstat -s | grep 'total memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*1024}'")
+      memory = self.runSysCommand("free -b | grep Mem | awk '{print $4}'")
     when "macOS"
       memory = self.runSysCommand("sysctl -n hw.memsize")
     when /BSD/
@@ -55,17 +55,18 @@ module Crfetch
     os = getPlatform
     case os
     when /Linux/
-      command = "vmstat -s | grep 'used memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1/1024}'"
-      self.runSysCommand(command).strip
+      used_memory = runSysCommand("free -b | grep Mem | awk '{print $3}'")
     when "macOS"
-      command = "vm_stat | grep 'Pages active' | awk '{print $3}' | sed 's/\.$//' | awk '{printf \"%.2f\\n\", $1*4096/1024/1024}'"
-      runSysCommand(command).strip
+      used_memory = runSysCommand("vm_stat | grep 'Pages active' | awk '{print $3}' | sed 's/\.$//' | awk '{printf \"%.2f\\n\", $1*4096}'")
     when /BSD/
-      command = "vmstat -s | grep 'pages active' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*4096/1024/1024}'"
-      runSysCommand(command).strip
+      used_memory = runSysCommand("vmstat -s | grep 'pages active' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*4096}'")
     else
-      nil
+      used_memory = ""
     end
+
+    megabyte = 1048676
+    used_memory = used_memory.strip.to_f / megabyte
+    output = "%.2f" % used_memory
   end
 
   def self.getCpu : String?
