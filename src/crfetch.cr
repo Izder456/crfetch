@@ -16,7 +16,9 @@ module Crfetch
     # Implement getting system platform
     case os = self.runSysCommand("uname").strip
     when /Linux/
-      "Linux"
+      distro_info = File.read("/etc/os-release")
+      match = distro_info.match(/PRETTY_NAME\s+=\s+(.+)/)
+      "Linux #{match}"
     when /Darwin/
       "macOS"
     when /FreeBSD/
@@ -35,7 +37,7 @@ module Crfetch
     os = getPlatform
     memory_command = case os
                      when "Linux"
-                       "vmstat -s | grep 'total memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1/1024}'"
+                       "vmstat -s | grep 'total memory' | awk '{print $1}' | awk '{printf \"%.2f\\n\", $1*1024}'"
                      when "macOS"
                        "sysctl -n hw.memsize"
                      when /BSD/
