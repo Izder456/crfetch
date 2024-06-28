@@ -91,23 +91,19 @@ module Resource
   end
 end
 
-def fetch
-  user = Resource.getUser
-  os = Resource.getPlatform
-  release = Resource.getRelease
-  cpu = Resource.getCpu
-  mem_usage = Resource.getMemoryUsage
-  mem = Resource.getMemory
+user = Resource.getUser
+os = Resource.getPlatform
+release = Resource.getRelease
+cpu = Resource.getCpu
+mem_usage = Resource.getMemoryUsage
+mem = Resource.getMemory
 
-  blue = "\e[34m"
-  bold = "\e[1m"
-  reset = "\e[0m"
+blue = "\e[34m"
+bold = "\e[1m"
+reset = "\e[0m"
 
-  puts "#{blue}    ,    #{reset}#{bold}USER#{reset}: #{user}"
-  puts "#{blue}   / \\   #{reset}#{bold}OS#{reset}:   #{os}"
-  puts "#{blue}  /   \\  #{reset}#{bold}VER#{reset}:  #{release}"
-  puts "#{blue} |     | #{reset}#{bold}CPU#{reset}:  #{cpu}"
-  puts "#{blue}  \\___/  #{reset}#{bold}MEM#{reset}:  #{mem_usage} MiB/#{mem} MiB"
-end
-
-fetch
+puts "#{blue}    ,    #{reset}#{bold}USER#{reset}: #{user}"
+puts "#{blue}   / \\   #{reset}#{bold}OS#{reset}:   #{os}"
+puts "#{blue}  /   \\  #{reset}#{bold}VER#{reset}:  #{release}"
+puts "#{blue} |     | #{reset}#{bold}CPU#{reset}:  #{cpu}"
+puts "#{blue}  \\___/  #{reset}#{bold}MEM#{reset}:  #{mem_usage} MiB/#{mem} MiB"
