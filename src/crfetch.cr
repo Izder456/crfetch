@@ -82,14 +82,9 @@ module Resource
     os = getPlatform
     case os
     when /Linux/
-      cpu_info = File.read("/proc/cpuinfo")
-      match = cpu_info.match(/model\ name\s+:\s+(.+)/)
-
-      match[1] if match
+      cpu_info = runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'")
     when /BSD/
       cpu_info = runSysCommand("sysctl -n hw.model").strip
-
-      cpu_info unless cpu_info.empty?
     else
       nil
     end
