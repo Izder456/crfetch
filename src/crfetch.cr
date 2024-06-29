@@ -39,12 +39,12 @@ module Resource
 
   def self.getRelease : String?
     # Implement Getting Release Version
-    self.runSysCommand("uname -r")
+    self.runSysCommand("uname -r").strip
   end
 
   def self.getUser : String?
     # Implement Getting Username
-    self.runSysCommand("whoami")
+    self.runSysCommand("whoami").strip
   end
 
   def self.getMemory : String?
@@ -52,9 +52,9 @@ module Resource
     os = getPlatform
     case os
     when /Linux/
-      memory = self.runSysCommand("free -b | awk '/Mem/ {print $2}'")
+      memory = self.runSysCommand("free -b | awk '/Mem/ {print $2}'").strip
     when /BSD/
-      memory = self.runSysCommand("sysctl -n hw.physmem")
+      memory = self.runSysCommand("sysctl -n hw.physmem").strip
     else
       memory = ""
     end
@@ -67,9 +67,9 @@ module Resource
     os = getPlatform
     case os
     when /Linux/
-      used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'")
+      used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'").strip
     when /BSD/
-      used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
+      used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'").strip
     else
       used_memory = ""
     end
@@ -82,7 +82,7 @@ module Resource
     os = getPlatform
     case os
     when /Linux/
-      cpu_info = runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'")
+      cpu_info = runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'").strip
     when /BSD/
       cpu_info = runSysCommand("sysctl -n hw.model").strip
     else
