@@ -8,13 +8,14 @@
 
 ** Planned Feature List
 - =[*] Colorize output=
-- =[ ] Threading System Commands=
+- =[*] Threading System Commands=
 - =[*] ASCII art=
 
 * Deps
 
 - Crystal >= 1.12.2
-
+- Shards >= 0.18.0 (usually included with Crystal)
+  
 * Usage
 
 #+BEGIN_SRC

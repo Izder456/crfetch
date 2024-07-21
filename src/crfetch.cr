@@ -12,12 +12,16 @@ end
 
 module Resource
   def self.runSysCommand(command : String) : String
-    # Implement running system command and yoinking output
-    output = IO::Memory.new
-    Process.run(command, shell: true, output: output)
-    output.close
-
-    output.to_s
+    # Implement running system command and yoinking output via channels
+    channel = Channel(String).new
+    # Spawn a fiber to communicate on the channel.
+    spawn do
+      output = IO::Memory.new
+      Process.run(command, shell: true, output: output)
+      output.close
+      channel.send(output.to_s)
+    end
+    channel.receive
   end
 
   def self.getPlatform : String?
