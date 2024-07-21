@@ -52,6 +52,11 @@ module Resource
     self.runSysCommand("whoami").strip
   end
 
+  def self.getHost : String?
+    # Implement Getting Hostname
+    self.runSysCommand("hostname").strip
+  end
+
   def self.getMemory : String?
     # Implement Getting Memory Usage
     os = getPlatform
@@ -182,6 +187,7 @@ module Main
 
     # get resources
     user = Resource.getUser
+    host = Resource.getHost
     os = Resource.getPlatform
     release = Resource.getRelease
     cpu = Resource.getCpu
@@ -215,7 +221,7 @@ module Main
     label = label.map(&.downcase) if options.lowercase
 
     # output
-    puts "#{colors[options.color]}    ,    #{reset}#{bold}#{label[0]}#{reset}: #{user}"
+    puts "#{colors[options.color]}    ,    #{reset}#{bold}#{label[0]}#{reset}: #{user}@#{host}"
     puts "#{colors[options.color]}   / \\   #{reset}#{bold}#{label[1]}#{reset}:   #{os}"
     puts "#{colors[options.color]}  /   \\  #{reset}#{bold}#{label[2]}#{reset}:  #{release}"
     puts "#{colors[options.color]} |     | #{reset}#{bold}#{label[3]}#{reset}:  #{cpu}"
