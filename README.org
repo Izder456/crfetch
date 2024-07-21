@@ -24,13 +24,30 @@
 - Crystal >= 1.12.2
 - Shards >= 0.18.0 (usually included with Crystal)
   
-* Usage
+* Build/Install
 
+** Build
 #+BEGIN_SRC
 $ git clone https://github.com/izder456/crfetch
 $ cd crfetch
 $ shards build # installs static binary to ./bin/crfetch
 $ ./bin/crfetch
+#+END_SRC
+
+** Install
+#+BEGIN_SRC
+$ cd crfetch
+$ install ./bin/crfetch /path/to/install/destination
+#+END_SRC
+
+* Usage
+
+#+BEGIN_SRC
+Usage: crfetch [options]
+-l, --lowercase                    Use lowercase labels
+-c, --color COLOR                  Pick a color output (0-7)
+                                   0 1 2 3 4 5 6 7
+-h, --help                         Show help
 #+END_SRC
 
 * License

@@ -95,7 +95,6 @@ module Resource
     end
   end
 end
-
 module OptionHandler
   class Options
     property lowercase : Bool
@@ -107,30 +106,72 @@ module OptionHandler
     end
   end
 
+  # Inherit Exception class
+  class OptionError < Exception end
+
   def self.parse : Options
     options = Options.new
 
-    OptionParser.parse do |parser|
-      parser.on "-l", "--lowercase", "Use lowercase labels" do
-        options.lowercase = true
-      end
+    begin
+      OptionParser.parse do |parser|
+        parser.on "-l", "--lowercase", "Use lowercase labels" do
+          options.lowercase = true
+        end
 
-      parser.on "-c COLOR", "--color COLOR", "Pick a color output (0-7)" do |c|
-        color = c.to_i
-        if color < 0 || color > 7
-          puts "Invalid color. Please choose a value between 0 and 7."
+        parser.on "-c COLOR", "--color COLOR", "Pick a color output (0-7)" do |c|
+          color = c.to_i?
+          if color.nil? || color < 0 || color > 7
+            raise OptionError.new("Invalid color. Please choose a value between 0 and 7.")
+          end
+          options.color = color
+        end
+
+        parser.on "-h", "--help", "Show help" do
+          puts self.help_message
           exit
         end
-        options.color = color
-      end
 
-      parser.on "-h", "--help", "Show help" do
-        puts parser
-        exit
+        parser.invalid_option do |flag|
+          raise OptionError.new("Invalid option: #{flag}")
+        end
+
+        parser.missing_option do |flag|
+          raise OptionError.new("Missing value for option: #{flag}")
+        end
       end
+    rescue error : OptionError
+      STDERR.puts "Error: #{error.message}"
+      exit(1)
+    rescue error : OptionParser::InvalidOption
+      STDERR.puts "Error: Invalid option"
+      exit(1)
+    rescue error : OptionParser::MissingOption
+      STDERR.puts "Error: Missing option"
+      exit(1)
     end
 
     options
+  end
+
+  def self.help_message : String
+    colors = [
+      "\e[31m0\e[0m",
+      "\e[32m1\e[0m",
+      "\e[33m2\e[0m",
+      "\e[34m3\e[0m",
+      "\e[35m4\e[0m",
+      "\e[36m5\e[0m",
+      "\e[37m6\e[0m",
+      "\e[30m7\e[0m"
+    ]
+
+    <<-HELP
+    Usage: crfetch [options]
+    -l, --lowercase                    Use lowercase labels
+    -c, --color COLOR                  Pick a color output (0-7)
+                                       #{colors.join(" ")}
+    -h, --help                         Show help
+    HELP
   end
 end
 
@@ -179,6 +220,10 @@ module Main
     puts "#{colors[options.color]} |     | #{reset}#{bold}#{label[3]}#{reset}:  #{cpu}"
     puts "#{colors[options.color]}  \\___/  #{reset}#{bold}#{label[4]}#{reset}:  #{mem_usage} MiB / #{mem} MiB"
     puts ""
+
+    rescue error : Exception
+      STDERR.puts "An unexpected error occurred: #{error.message}"
+      exit(1)
   end
 end
 
