@@ -10,14 +10,14 @@
 - =[*] Colorize output=
 - =[*] Threading System Commands=
 - =[*] ASCII art=
-- =[ ] Options=:
+- =[*] Options=:
   - =[*] Tear Color=
   - =[*] Lowercase output labels=
-  - =[ ] ASCII Logos=:
-    - =[ ] Linux's Tux=
-    - =[ ] OpenBSD's Puffy=
-    - =[ ] NetBSD's Flag=
-    - =[ ] FreeBSD's Orb/Beastie=
+  - =[*] ASCII Logos=:
+    - =[*] Linux's Tux=
+    - =[*] OpenBSD's Puffy=
+    - =[*] NetBSD's Flag=
+    - =[*] FreeBSD's Orb/Beastie=
       
 * Deps
 
@@ -45,8 +45,9 @@ $ install ./bin/crfetch /path/to/install/destination
 #+BEGIN_SRC
 Usage: crfetch [options]
 -l, --lowercase                    Use lowercase labels
--c, --color COLOR                  Pick a color output (0-7)
+-c, --color COLOR                  Pick a color output (0-7) [default = 3]
                                    0 1 2 3 4 5 6 7
+-a, --ascii ASCII                  Choose ASCII art (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD) [default = Tear]
 -h, --help                         Show help
 #+END_SRC
 
@@ -73,3 +74,7 @@ OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 #+END_SRC
+
+* Credit
+
+ASCII Logos originally from [[https://github.com/dylanaraps/pfetch][pfetch]], /modified/.

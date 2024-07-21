@@ -105,10 +105,12 @@ module OptionHandler
   class Options
     property lowercase : Bool
     property color : Int32
+    property ascii : String
 
     def initialize
       @lowercase = false
       @color = 3 # Default blue
+      @ascii = "Tear" # Default ASCII art
     end
   end
 
@@ -130,6 +132,14 @@ module OptionHandler
             raise OptionError.new("Invalid color. Please choose a value between 0 and 7.")
           end
           options.color = color
+        end
+
+        parser.on "-a ASCII", "--ascii ASCII", "Choose ASCII art (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD)" do |a|
+          if ["Tear", "None", "Linux", "OpenBSD", "NetBSD", "FreeBSD"].includes?(a)
+            options.ascii = a
+          else
+            raise OptionError.new("Invalid ASCII art option. Choose from: Tear, None, Linux, OpenBSD, NetBSD, FreeBSD")
+          end
         end
 
         parser.on "-h", "--help", "Show help" do
@@ -174,8 +184,9 @@ module OptionHandler
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase                    Use lowercase labels
-    -c, --color COLOR                  Pick a color output (0-7)
+    -c, --color COLOR                  Pick a color output (0-7) [default = 3]
                                        #{colors.join(" ")}
+    -a, --ascii ASCII                  Choose ASCII art (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD) [default = Tear]
     -h, --help                         Show help
     HELP
   end
@@ -218,15 +229,93 @@ module Main
       "MEM"
     ]
 
+    # ASCII art
+    ascii_art = {
+      "Tear" => [
+        "         ",
+        "    ,    ",
+        "   / \\   ",
+        "  /   \\  ",
+        " |     | ",
+        "  \\___/  ",
+        "         "
+      ],
+      "None" => [
+        "  ",
+        "  ",
+        "  ",
+        "  ",
+        "  ",
+        "  "
+      ],
+      "Linux" => [
+        "     ___     ",
+        "    [..,|    ",
+        "    [<> |    ",
+        "   / __` \\   ",
+        "  ( /  \\ {|  ",
+        "  /\\ __)/,)  ",
+        " (}\\____\\/   "
+      ],
+      "OpenBSD" => [
+        "      _____      ",
+        "    \\-     -/    ",
+        " \\_/ .`  ,   \\   ",
+        " | ,    , 0 0 |  ",
+        " |_  <   }  3 }  ",
+        " / \\`   . `  /   ",
+        "    /-_____-\\    "
+      ],
+      "NetBSD" => [
+        "                       ",
+        " \\\\\\\`-______,----__    ",
+        "  \\\\  -  _  __,---\\`_  ",
+        "   \\\\  ,  . \\`.____    ",
+        "    \\\\-______,----\\`-  ",
+        "     \\\\                ",
+        "      \\\\               ",
+        "       \\\\              "
+      ],
+      "FreeBSD" => [
+        "                ",
+        " /\\.-^^^^^-./\\  ",
+        " \\_)  ,.,  (_/  ",
+        " |     W     |  ",
+        " |     |     |  ",
+        "  ;    |    ;   ",
+        "   '-_____-'    "
+      ]
+    }
+
+    # set lowercase if lowercase
     label = label.map(&.downcase) if options.lowercase
+    # get chosen ascii art
+    chosen_ascii = ascii_art[options.ascii]
+
 
     # output
-    puts "#{colors[options.color]}    ,    #{reset}#{bold}#{label[0]}#{reset}: #{user}@#{host}"
-    puts "#{colors[options.color]}   / \\   #{reset}#{bold}#{label[1]}#{reset}:   #{os}"
-    puts "#{colors[options.color]}  /   \\  #{reset}#{bold}#{label[2]}#{reset}:  #{release}"
-    puts "#{colors[options.color]} |     | #{reset}#{bold}#{label[3]}#{reset}:  #{cpu}"
-    puts "#{colors[options.color]}  \\___/  #{reset}#{bold}#{label[4]}#{reset}:  #{mem_usage} MiB / #{mem} MiB"
-    puts ""
+    max_lines = [chosen_ascii.size, 5].max
+    (0...max_lines).each do |index|
+      ascii_line = index < chosen_ascii.size ? chosen_ascii[index] : " " * chosen_ascii[0].size
+      info_line = case index
+                  when 1
+                    "#{bold}#{label[0]}#{reset}: #{user}@#{host}"
+                  when 2
+                    "#{bold}#{label[1]}#{reset}: #{os}"
+                  when 3
+                    "#{bold}#{label[2]}#{reset}: #{release}"
+                  when 4
+                    "#{bold}#{label[3]}#{reset}: #{cpu}"
+                  when 5
+                    "#{bold}#{label[4]}#{reset}: #{mem_usage} MiB / #{mem} MiB"
+                  else
+                    ""
+                  end
+
+      puts "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
+    end
+
+    puts "" # Add newline padding at the bottom
   end
 end
 
