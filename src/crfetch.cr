@@ -95,6 +95,7 @@ module Resource
     end
   end
 end
+
 module OptionHandler
   class Options
     property lowercase : Bool
@@ -155,14 +156,14 @@ module OptionHandler
 
   def self.help_message : String
     colors = [
-      "\e[31m0\e[0m",
-      "\e[32m1\e[0m",
-      "\e[33m2\e[0m",
-      "\e[34m3\e[0m",
-      "\e[35m4\e[0m",
-      "\e[36m5\e[0m",
-      "\e[37m6\e[0m",
-      "\e[30m7\e[0m"
+      "\e[31m0\e[0m", # red
+      "\e[32m1\e[0m", # green
+      "\e[33m2\e[0m", # yellow
+      "\e[34m3\e[0m", # blue
+      "\e[35m4\e[0m", # magenta
+      "\e[36m5\e[0m", # cyan
+      "\e[37m6\e[0m", # white
+      "\e[30m7\e[0m"  # black
     ]
 
     <<-HELP
@@ -220,10 +221,6 @@ module Main
     puts "#{colors[options.color]} |     | #{reset}#{bold}#{label[3]}#{reset}:  #{cpu}"
     puts "#{colors[options.color]}  \\___/  #{reset}#{bold}#{label[4]}#{reset}:  #{mem_usage} MiB / #{mem} MiB"
     puts ""
-
-    rescue error : Exception
-      STDERR.puts "An unexpected error occurred: #{error.message}"
-      exit(1)
   end
 end
 
