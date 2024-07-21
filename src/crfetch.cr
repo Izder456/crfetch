@@ -301,13 +301,13 @@ module Main
                   when 1
                     "#{bold}#{label[0]}#{reset}: #{user}@#{host}"
                   when 2
-                    "#{bold}#{label[1]}#{reset}: #{os}"
+                    "#{bold}#{label[1]}#{reset}:   #{os}"
                   when 3
-                    "#{bold}#{label[2]}#{reset}: #{release}"
+                    "#{bold}#{label[2]}#{reset}:  #{release}"
                   when 4
-                    "#{bold}#{label[3]}#{reset}: #{cpu}"
+                    "#{bold}#{label[3]}#{reset}:  #{cpu}"
                   when 5
-                    "#{bold}#{label[4]}#{reset}: #{mem_usage} MiB / #{mem} MiB"
+                    "#{bold}#{label[4]}#{reset}:  #{mem_usage} MiB / #{mem} MiB"
                   else
                     ""
                   end
