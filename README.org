@@ -10,7 +10,15 @@
 - =[*] Colorize output=
 - =[*] Threading System Commands=
 - =[*] ASCII art=
-
+- =[ ] Options=:
+  - =[ ] Tear Color (a pick of the 16 colors or LGBT/Queer possibly?)=
+  - =[ ] Lowercase output labels=
+  - =[ ] ASCII Logos=:
+    - =[ ] Linux's Tux,=
+    - =[ ] OpenBSD's Puffy,=
+    - =[ ] NetBSD's Flag,=
+    - =[ ] FreeBSD's Orb/Beastie=
+      
 * Deps
 
 - Crystal >= 1.12.2
