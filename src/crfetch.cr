@@ -1,4 +1,5 @@
 require "process"
+require "option_parser"
 
 module Manip
   def self.bytesToMebibytes(bytes : String) : String
@@ -95,19 +96,90 @@ module Resource
   end
 end
 
-user = Resource.getUser
-os = Resource.getPlatform
-release = Resource.getRelease
-cpu = Resource.getCpu
-mem_usage = Resource.getMemoryUsage
-mem = Resource.getMemory
+module OptionHandler
+  class Options
+    property lowercase : Bool
+    property color : Int32
 
-blue = "\e[34m"
-bold = "\e[1m"
-reset = "\e[0m"
+    def initialize
+      @lowercase = false
+      @color = 3 # Default blue
+    end
+  end
 
-puts "#{blue}    ,    #{reset}#{bold}USER#{reset}: #{user}"
-puts "#{blue}   / \\   #{reset}#{bold}OS#{reset}:   #{os}"
-puts "#{blue}  /   \\  #{reset}#{bold}VER#{reset}:  #{release}"
-puts "#{blue} |     | #{reset}#{bold}CPU#{reset}:  #{cpu}"
-puts "#{blue}  \\___/  #{reset}#{bold}MEM#{reset}:  #{mem_usage} MiB / #{mem} MiB"
+  def self.parse : Options
+    options = Options.new
+
+    OptionParser.parse do |parser|
+      parser.on "-l", "--lowercase", "Use lowercase labels" do
+        options.lowercase = true
+      end
+
+      parser.on "-c COLOR", "--color COLOR", "Pick a color output (0-7)" do |c|
+        color = c.to_i
+        if color < 0 || color > 7
+          puts "Invalid color. Please choose a value between 0 and 7."
+          exit
+        end
+        options.color = color
+      end
+
+      parser.on "-h", "--help", "Show help" do
+        puts parser
+        exit
+      end
+    end
+
+    options
+  end
+end
+
+module Main
+  def self.run
+    options = OptionHandler.parse
+
+    # get resources
+    user = Resource.getUser
+    os = Resource.getPlatform
+    release = Resource.getRelease
+    cpu = Resource.getCpu
+    mem_usage = Resource.getMemoryUsage
+    mem = Resource.getMemory
+
+    # variables for formatting
+    ## styles
+    bold = "\e[1m"
+    reset = "\e[0m"
+    ## colors
+    colors = [
+      "\e[31m", # red
+      "\e[32m", # green
+      "\e[33m", # yellow
+      "\e[34m", # blue
+      "\e[35m", # magenta
+      "\e[36m", # cyan
+      "\e[37m", # white
+      "\e[30m"  # black
+    ]
+    # labels
+    label = [
+      "USER",
+      "OS",
+      "VER",
+      "CPU",
+      "MEM"
+    ]
+
+    label = label.map(&.downcase) if options.lowercase
+
+    # output
+    puts "#{colors[options.color]}    ,    #{reset}#{bold}#{label[0]}#{reset}: #{user}"
+    puts "#{colors[options.color]}   / \\   #{reset}#{bold}#{label[1]}#{reset}:   #{os}"
+    puts "#{colors[options.color]}  /   \\  #{reset}#{bold}#{label[2]}#{reset}:  #{release}"
+    puts "#{colors[options.color]} |     | #{reset}#{bold}#{label[3]}#{reset}:  #{cpu}"
+    puts "#{colors[options.color]}  \\___/  #{reset}#{bold}#{label[4]}#{reset}:  #{mem_usage} MiB / #{mem} MiB"
+    puts ""
+  end
+end
+
+Main.run
