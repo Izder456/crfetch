@@ -291,28 +291,23 @@ module Main
     # get chosen ascii art
     chosen_ascii = ascii_art[options.ascii]
 
+    # get the maximum width of the labels
+    max_label_width = label.map(&.size).max
 
     # output
     max_lines = [chosen_ascii.size, 5].max
-    (0...max_lines).each do |index|
-      ascii_line = index < chosen_ascii.size ? chosen_ascii[index] : " " * chosen_ascii[0].size
-      info_line = case index
-                  when 1
-                    "#{bold}#{label[0]}#{reset}: #{user}@#{host}"
-                  when 2
-                    "#{bold}#{label[1]}#{reset}:   #{os}"
-                  when 3
-                    "#{bold}#{label[2]}#{reset}:  #{release}"
-                  when 4
-                    "#{bold}#{label[3]}#{reset}:  #{cpu}"
-                  when 5
-                    "#{bold}#{label[4]}#{reset}:  #{mem_usage} MiB / #{mem} MiB"
-                  else
-                    ""
-                  end
+    (0...max_lines).map do |index|
+      ascii_line = chosen_ascii.fetch(index, " " * chosen_ascii[0].size)
+      info_line = {
+        1 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[0], "#{user}@#{host}"],
+        2 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[1], os],
+        3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[2], release],
+        4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[3], cpu],
+        5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[4], "#{mem_usage} MiB / #{mem} MiB"]
+      }.fetch(index, "")
 
-      puts "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
-    end
+      "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
+    end.each { |line| puts line }
 
     puts "" # Add newline padding at the bottom
   end

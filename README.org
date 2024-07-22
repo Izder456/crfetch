@@ -30,7 +30,7 @@
 #+BEGIN_SRC
 $ git clone https://github.com/izder456/crfetch
 $ cd crfetch
-$ shards build # installs static binary to ./bin/crfetch
+$ shards build --release --static # installs static binary to ./bin/crfetch
 $ ./bin/crfetch
 #+END_SRC
 
