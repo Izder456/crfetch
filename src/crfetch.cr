@@ -103,15 +103,9 @@ end
 
 module OptionHandler
   class Options
-    property lowercase : Bool
-    property color : Int32
-    property ascii : String
-
-    def initialize
-      @lowercase = false
-      @color = 3 # Default blue
-      @ascii = "Tear" # Default ASCII art
-    end
+    property lowercase : Bool = false # Default UPCASE
+    property color : Int32 = 3 # Default Blue
+    property ascii : String = "Tear" # Default ASCII
   end
 
   # Inherit Exception class
@@ -120,74 +114,36 @@ module OptionHandler
   def self.parse : Options
     options = Options.new
 
-    begin
-      OptionParser.parse do |parser|
-        parser.on "-l", "--lowercase", "Use lowercase labels" do
-          options.lowercase = true
-        end
-
-        parser.on "-c COLOR", "--color COLOR", "Pick a color output (0-7)" do |c|
-          color = c.to_i?
-          if color.nil? || color < 0 || color > 7
-            raise OptionError.new("Invalid color. Please choose a value between 0 and 7.")
-          end
-          options.color = color
-        end
-
-        parser.on "-a ASCII", "--ascii ASCII", "Choose ASCII art (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD)" do |a|
-          if ["Tear", "None", "Linux", "OpenBSD", "NetBSD", "FreeBSD"].includes?(a)
-            options.ascii = a
-          else
-            raise OptionError.new("Invalid ASCII art option. Choose from: Tear, None, Linux, OpenBSD, NetBSD, FreeBSD")
-          end
-        end
-
-        parser.on "-h", "--help", "Show help" do
-          puts self.help_message
-          exit
-        end
-
-        parser.invalid_option do |flag|
-          raise OptionError.new("Invalid option: #{flag}")
-        end
-
-        parser.missing_option do |flag|
-          raise OptionError.new("Missing value for option: #{flag}")
-        end
+    OptionParser.parse do |parser|
+      parser.on("-l", "--lowercase", "Use lowercase labels") { options.lowercase = true }
+      parser.on("-c COLOR", "--color COLOR", "Pick a color output") do |c|
+        color = c.to_i?
+        raise OptionError.new("Invalid color. Please choose a value between 0 and 7.") if color.nil? || color < 0 || color > 7
+        options.color = color
       end
-    rescue error : OptionError
-      STDERR.puts "Error: #{error.message}"
-      exit(1)
-    rescue error : OptionParser::InvalidOption
-      STDERR.puts "Error: Invalid option"
-      exit(1)
-    rescue error : OptionParser::MissingOption
-      STDERR.puts "Error: Missing option"
-      exit(1)
+      parser.on("-a ASCII", "--ascii ASCII", "Choose ASCII art") do |a|
+        raise OptionError.new("Invalid ASCII art option. Choose from: Tear, None, Linux, OpenBSD, NetBSD, FreeBSD") unless ["Tear", "None", "Linux", "OpenBSD", "NetBSD", "FreeBSD"].includes?(a)
+        options.ascii = a
+      end
+      parser.on("-h", "--help", "Show help") { puts help_message; exit }
     end
 
     options
+  rescue error : OptionError | OptionParser::InvalidOption | OptionParser::MissingOption
+    STDERR.puts "Error: #{error.message}"
+    exit(1)
   end
 
   def self.help_message : String
-    colors = [
-      "\e[31m0\e[0m", # red
-      "\e[32m1\e[0m", # green
-      "\e[33m2\e[0m", # yellow
-      "\e[34m3\e[0m", # blue
-      "\e[35m4\e[0m", # magenta
-      "\e[36m5\e[0m", # cyan
-      "\e[37m6\e[0m", # white
-      "\e[30m7\e[0m"  # black
-    ]
-
+    colors = (31..37).map { |c| "\e[#{c}m#{c - 31}\e[0m" }.join(" ")
     <<-HELP
     Usage: crfetch [options]
-    -l, --lowercase                    Use lowercase labels
-    -c, --color COLOR                  Pick a color output (0-7) [default = 3]
-                                       #{colors.join(" ")}
-    -a, --ascii ASCII                  Choose ASCII art (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD) [default = Tear]
-    -h, --help                         Show help
+    -l, --lowercase         Use lowercase labels
+    -c, --color COLOR       Pick a color output [default = 3]
+                            #{colors}
+    -a, --ascii             ASCII Choose ASCII art [default = Tear]
+                            (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD)
+    -h, --help              Show help
     HELP
   end
 end
@@ -209,25 +165,12 @@ module Main
     ## styles
     bold = "\e[1m"
     reset = "\e[0m"
+
     ## colors
-    colors = [
-      "\e[31m", # red
-      "\e[32m", # green
-      "\e[33m", # yellow
-      "\e[34m", # blue
-      "\e[35m", # magenta
-      "\e[36m", # cyan
-      "\e[37m", # white
-      "\e[30m"  # black
-    ]
+    colors = (31..37).map { |c| "\e[#{c}m" }
+
     # labels
-    label = [
-      "USER",
-      "OS",
-      "VER",
-      "CPU",
-      "MEM"
-    ]
+    label = ["USER", "OS", "VER", "CPU", "MEM"]
 
     # ASCII art
     ascii_art = {
