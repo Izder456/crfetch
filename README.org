@@ -93,4 +93,4 @@ PERFORMANCE OF THIS SOFTWARE.
 
 * Credit
 
-ASCII Logos originally from
+ASCII Logos originally from [[https://github.com/dylanaraps/pfetch][pfetch]], /modified/.
