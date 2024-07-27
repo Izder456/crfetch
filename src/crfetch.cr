@@ -122,13 +122,13 @@ module OptionHandler
   end
 
   def self.help_message : String
-    colors = (30..37).map { |c| "\e[#{c}m#{c - 31}\e[0m" }.join(" ")
+    colors = (30..37).map { |c| "\e[#{c}m#{c - 30}\e[0m" }.join(" ")
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase         Use lowercase labels
     -c, --color COLOR       Pick a color output [default = 4]
                             (#{colors})
-    -a, --ascii             ASCII Choose ASCII art [default = Tear]
+    -a, --ascii ASCII       Choose ASCII art [default = Tear]
                             (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD)
     -h, --help              Show help
     HELP
