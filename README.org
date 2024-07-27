@@ -21,19 +21,26 @@
 
 ** Why another fetching utility?
 
-- *It's fast*
-    | Command     | Mean [ms]    | Min [ms] | Max [ms] | Relative     |
-    |-------------+--------------+----------+----------+--------------|
-    | =crfetch=     | 49.5 ± 12.7  |     45.2 |    110.4 | 1.00         |
-    | =ufetch=      | 83.4 ± 15.6  |     74.8 |    145.2 | 1.68 ± 0.54  |
-    | =pfetch=      | 213.3 ± 31.7 |    191.3 |    300.0 | 4.31 ± 1.28  |
-    | =neofetch=    | 778.6 ± 31.2 |    719.3 |    825.9 | 15.73 ± 4.09 |
-    | =screenfetch= | 983.0 ± 17.4 |    935.4 |   1024.8 | 19.86 ± 5.12 |
-    /Recorded on a Let's Note CF-NX4 running OpenBSD, with an i5-5300U and 16GB of ram./
-- *It's minimal*
-    Configuring is done via runtime command switches. You want a config file? Add the switches you want to your shell profile as an alias.
-- *It's fun to write crystal*
-    IMO, crystal doesn't get enough love +probably cos the tooling kinda sucks+, I wanted an excuse to learn a new programming language.
+    - *It's fast*
+
+        | Command     | Mean [ms]    | Min [ms] | Max [ms] | Relative     |
+        |-------------+--------------+----------+----------+--------------|
+        | =crfetch=     | 49.5 ± 12.7  |     45.2 |    110.4 | 1.00         |
+        | =ufetch=      | 83.4 ± 15.6  |     74.8 |    145.2 | 1.68 ± 0.54  |
+        | =pfetch=      | 213.3 ± 31.7 |    191.3 |    300.0 | 4.31 ± 1.28  |
+        | =neofetch=    | 778.6 ± 31.2 |    719.3 |    825.9 | 15.73 ± 4.09 |
+        | =screenfetch= | 983.0 ± 17.4 |    935.4 |   1024.8 | 19.86 ± 5.12 |
+
+        /Recorded on a Panasonic Let's Note CF-NX4 running OpenBSD, with an i5-5300U and 16GB of ram./
+
+    - *It's minimal*
+
+        Configuring is done via runtime command switches. You want a config file? Add the switches you want to your shell profile as an alias.
+
+    - *It's fun to write crystal*
+
+        IMO, crystal doesn't get enough love (+probably cos the tooling kinda sucks+).
+        I also wanted an excuse to learn a new programming language.
 
 * Deps
 
