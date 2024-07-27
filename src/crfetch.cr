@@ -2,10 +2,12 @@ require "process"
 require "option_parser"
 
 module Manip
+  # Use a constant here
+  MEBIBYTE = 1048576
+
   def self.bytesToMebibytes(bytes : String) : String
     # Implement turning bytes into Mebibytes
-    mebibyte = 1048576
-    bytes = bytes.strip.to_f / mebibyte
+    bytes = bytes.strip.to_f / MEBIBYTE
 
     "%.2f" % bytes
   end
@@ -13,24 +15,20 @@ end
 
 module Resource
   def self.runSysCommand(command : String) : String
-    # Implement running system command and yoinking output via channels
     channel = Channel(String).new
-    # Spawn a fiber to communicate on the channel.
     spawn do
       output = IO::Memory.new
       Process.run(command, shell: true, output: output)
       output.close
       channel.send(output.to_s)
     end
-    channel.receive
+    channel.receive.strip
   end
 
   def self.getPlatform : String?
-    # Implement getting system platform
-    case os = self.runSysCommand("uname").strip
+    case runSysCommand("uname")
     when /Linux/
-      match = runSysCommand("grep PRETTY_NAME /etc/os-release | cut -d = -f 2")
-      "Linux #{match}"
+      "Linux #{runSysCommand("grep PRETTY_NAME /etc/os-release | cut -d = -f 2")}"
     when /FreeBSD/
       "FreeBSD"
     when /OpenBSD/
@@ -43,58 +41,47 @@ module Resource
   end
 
   def self.getRelease : String?
-    # Implement Getting Release Version
-    self.runSysCommand("uname -r").strip
+    runSysCommand("uname -r")
   end
 
   def self.getUser : String?
-    # Implement Getting Username
-    self.runSysCommand("whoami").strip
+    runSysCommand("whoami")
   end
 
   def self.getHost : String?
-    # Implement Getting Hostname
-    self.runSysCommand("hostname").strip
+    runSysCommand("hostname")
   end
 
   def self.getMemory : String?
-    # Implement Getting Memory Usage
-    os = getPlatform
-    case os
+    case getPlatform
     when /Linux/
-      memory = self.runSysCommand("free -b | awk '/Mem/ {print $2}'").strip
+      memory = runSysCommand("free -b | awk '/Mem/ {print $2}'")
     when /BSD/
-      memory = self.runSysCommand("sysctl -n hw.physmem").strip
+      memory = runSysCommand("sysctl -n hw.physmem")
     else
       memory = ""
     end
-
     Manip.bytesToMebibytes(memory)
   end
 
   def self.getMemoryUsage : String?
-    # Implement getting memory usage
-    os = getPlatform
-    case os
+    case getPlatform
     when /Linux/
-      used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'").strip
+      used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'")
     when /BSD/
-      used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'").strip
+      used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
     else
       used_memory = ""
     end
-
     Manip.bytesToMebibytes(used_memory)
   end
 
   def self.getCpu : String?
-    # Implement Getting CPU name
-    os = getPlatform
-    case os
+    case getPlatform
     when /Linux/
-      cpu_info = runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'").strip
+      runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'")
     when /BSD/
-      cpu_info = runSysCommand("sysctl -n hw.model").strip
+      runSysCommand("sysctl -n hw.model")
     else
       nil
     end
