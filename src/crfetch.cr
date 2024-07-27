@@ -91,7 +91,7 @@ end
 module OptionHandler
   class Options
     property lowercase : Bool = false # Default UPCASE
-    property color : Int32 = 3 # Default Blue
+    property color : Int32 = 4 # Default Blue
     property ascii : String = "Tear" # Default ASCII
   end
 
@@ -109,7 +109,7 @@ module OptionHandler
         options.color = color
       end
       parser.on("-a ASCII", "--ascii ASCII", "Choose ASCII art") do |a|
-        raise OptionError.new("Invalid ASCII art option. Choose from: Tear, None, Linux, OpenBSD, NetBSD, FreeBSD") unless ["Tear", "None", "Linux", "OpenBSD", "NetBSD", "FreeBSD"].includes?(a)
+        raise OptionError.new("Invalid ASCII art option. Choose from: None, Tear, Linux, OpenBSD, NetBSD, FreeBSD") unless ["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD"].includes?(a)
         options.ascii = a
       end
       parser.on("-h", "--help", "Show help") { puts help_message; exit }
@@ -122,14 +122,14 @@ module OptionHandler
   end
 
   def self.help_message : String
-    colors = (31..37).map { |c| "\e[#{c}m#{c - 31}\e[0m" }.join(" ")
+    colors = (30..37).map { |c| "\e[#{c}m#{c - 31}\e[0m" }.join(" ")
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase         Use lowercase labels
     -c, --color COLOR       Pick a color output [default = 3]
-                            #{colors}
+                            (#{colors})
     -a, --ascii             ASCII Choose ASCII art [default = Tear]
-                            (Tear, None, Linux, OpenBSD, NetBSD, FreeBSD)
+                            (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD)
     -h, --help              Show help
     HELP
   end
@@ -154,13 +154,16 @@ module Main
     reset = "\e[0m"
 
     ## colors
-    colors = (31..37).map { |c| "\e[#{c}m" }
+    colors = (30..37).map { |c| "\e[#{c}m" }
 
     # labels
     label = ["USER", "OS", "VER", "CPU", "MEM"]
+    ## set lowercase if lowercase
+    label = label.map(&.downcase) if options.lowercase
 
     # ASCII art
     ascii_art = {
+      "None" => Array.new(6, "  "),
       "Tear" => [
         "         ",
         "    ,    ",
@@ -168,14 +171,6 @@ module Main
         "  /   \\  ",
         " |     | ",
         "  \\___/  ",
-      ],
-      "None" => [
-        "  ",
-        "  ",
-        "  ",
-        "  ",
-        "  ",
-        "  "
       ],
       "Linux" => [
         "     ___     ",
@@ -216,8 +211,6 @@ module Main
       ]
     }
 
-    # set lowercase if lowercase
-    label = label.map(&.downcase) if options.lowercase
     # get chosen ascii art
     chosen_ascii = ascii_art[options.ascii]
 
