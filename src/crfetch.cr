@@ -126,7 +126,7 @@ module OptionHandler
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase         Use lowercase labels
-    -c, --color COLOR       Pick a color output [default = 3]
+    -c, --color COLOR       Pick a color output [default = 4]
                             (#{colors})
     -a, --ascii             ASCII Choose ASCII art [default = Tear]
                             (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD)
