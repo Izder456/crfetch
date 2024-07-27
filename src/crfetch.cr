@@ -59,7 +59,7 @@ module Resource
     when /BSD/
       memory = runSysCommand("sysctl -n hw.physmem")
     else
-      memory = "Could not get total memory"
+      memory = "0"
     end
     Manip.bytesToMebibytes(memory)
   end
@@ -71,7 +71,7 @@ module Resource
     when /BSD/
       used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
     else
-      used_memory = "Could not get used memory"
+      used_memory = "0"
     end
     Manip.bytesToMebibytes(used_memory)
   end
