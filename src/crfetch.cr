@@ -25,7 +25,7 @@ module Resource
     channel.receive.strip
   end
 
-  def self.getPlatform : String?
+  def self.getPlatform : String
     case runSysCommand("uname")
     when /Linux/
       "Linux #{runSysCommand("grep PRETTY_NAME /etc/os-release | cut -d = -f 2")}"
@@ -40,50 +40,50 @@ module Resource
     end
   end
 
-  def self.getRelease : String?
+  def self.getRelease : String
     runSysCommand("uname -r")
   end
 
-  def self.getUser : String?
+  def self.getUser : String
     runSysCommand("whoami")
   end
 
-  def self.getHost : String?
+  def self.getHost : String
     runSysCommand("hostname")
   end
 
-  def self.getMemory : String?
+  def self.getMemory : String
     case getPlatform
     when /Linux/
       memory = runSysCommand("free -b | awk '/Mem/ {print $2}'")
     when /BSD/
       memory = runSysCommand("sysctl -n hw.physmem")
     else
-      memory = ""
+      memory = "Could not get total memory"
     end
     Manip.bytesToMebibytes(memory)
   end
 
-  def self.getMemoryUsage : String?
+  def self.getMemoryUsage : String
     case getPlatform
     when /Linux/
       used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'")
     when /BSD/
       used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
     else
-      used_memory = ""
+      used_memory = "Could not get used memory"
     end
     Manip.bytesToMebibytes(used_memory)
   end
 
-  def self.getCpu : String?
+  def self.getCpu : String
     case getPlatform
     when /Linux/
       runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'")
     when /BSD/
       runSysCommand("sysctl -n hw.model")
     else
-      nil
+      "Could not get CPU"
     end
   end
 end
