@@ -45,11 +45,19 @@ module Resource
   end
 
   def self.getUser : String
-    runSysCommand("whoami")
+    env = ENV["USER"]
+    user = env || "Could not get $USER"
+    user.to_s
   end
 
   def self.getHost : String
     runSysCommand("hostname")
+  end
+
+  def self.getShell : String
+    path = ENV["SHELL"]
+    shell = File.basename(path) if path || "Could not get $SHELL"
+    shell.to_s
   end
 
   def self.getMemory : String
@@ -90,9 +98,10 @@ end
 
 module OptionHandler
   class Options
-    property lowercase : Bool = false # Default UPCASE
-    property color : Int32 = 4 # Default Blue
-    property ascii : String = "Tear" # Default ASCII
+    property lowercase : Bool = false    # Default UPCASE
+    property color : Int32 = 4           # Default Blue
+    property ascii : String = "Tear"     # Default ASCII
+    property separator : String = " -> " # Default Separator
   end
 
   # Inherit Exception class
@@ -103,13 +112,17 @@ module OptionHandler
 
     OptionParser.parse do |parser|
       parser.on("-l", "--lowercase", "Use lowercase labels") { options.lowercase = true }
+      parser.on("-s STRING", "--separator STRING", "Separator") do |s|
+        raise OptionError.new("Invalid Separator. Please provide a separator string") if s.nil?
+        options.separator = s
+      end
       parser.on("-c COLOR", "--color COLOR", "Pick a color output") do |c|
         color = c.to_i?
         raise OptionError.new("Invalid color. Please choose a value between 0 and 7.") if color.nil? || color < 0 || color > 7
         options.color = color
       end
       parser.on("-a ASCII", "--ascii ASCII", "Choose ASCII art") do |a|
-        raise OptionError.new("Invalid ASCII art option. Choose from: None, Tear, Linux, OpenBSD, NetBSD, FreeBSD") unless ["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD"].includes?(a)
+        raise OptionError.new("Invalid ASCII art option. Choose from: None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident") unless ["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD", "FreeBSDTrident"].includes?(a)
         options.ascii = a
       end
       parser.on("-h", "--help", "Show help") { puts help_message; exit }
@@ -126,10 +139,11 @@ module OptionHandler
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase         Use lowercase labels
+    -s, --separator STRING  Separator [default = " -> ", can be blank, does not account for spacing]
     -c, --color COLOR       Pick a color output [default = 4]
                             (#{colors})
     -a, --ascii ASCII       Choose ASCII art [default = Tear]
-                            (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD)
+                            (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident)
     -h, --help              Show help
     HELP
   end
@@ -142,6 +156,7 @@ module Main
     # get resources
     user = Resource.getUser
     host = Resource.getHost
+    shell = Resource.getShell
     os = Resource.getPlatform
     release = Resource.getRelease
     cpu = Resource.getCpu
@@ -157,13 +172,13 @@ module Main
     colors = (30..37).map { |c| "\e[#{c}m" }
 
     # labels
-    label = ["USER", "OS", "VER", "CPU", "MEM"]
+    label = ["USER", "OS", "SHELL", "VER", "CPU", "MEM"]
     ## set lowercase if lowercase
     label = label.map(&.downcase) if options.lowercase
 
     # ASCII art
     ascii_art = {
-      "None" => Array.new(6, "  "),
+      "None" => Array.new(7, "  "),
       "Tear" => [
         "         ",
         "    ,    ",
@@ -171,6 +186,7 @@ module Main
         "  /   \\  ",
         " |     | ",
         "  \\___/  ",
+        "         "
       ],
       "Linux" => [
         "     ___     ",
@@ -179,7 +195,8 @@ module Main
         "   / __` \\   ",
         "  ( /  \\ {|  ",
         "  /\\ __)/,)  ",
-        " (}\\____\\/   "
+        " (}\\____\\/   ",
+        "             "
       ],
       "OpenBSD" => [
         "      _____      ",
@@ -188,7 +205,8 @@ module Main
         " | ,    , 0 0 |  ",
         " |_  <   }  3 }  ",
         " / \\`   . `  /   ",
-        "    /-_____-\\    "
+        "    /-_____-\\    ",
+        "                 "
       ],
       "NetBSD" => [
         "                       ",
@@ -198,16 +216,28 @@ module Main
         "    \\\\-______,----\\`-  ",
         "     \\\\                ",
         "      \\\\               ",
-        "       \\\\              "
+        "       \\\\              ",
+        "                       "
       ],
       "FreeBSD" => [
+        "                ",
+        " /\\.-^^^^^-./\\  ",
+        " \\_)       (_/  ",
+        " |           |  ",
+        " |           |  ",
+        "  ;         ;   ",
+        "   '-_____-'    ",
+        "                "
+      ],
+      "FreeBSDTrident" => [
         "                ",
         " /\\.-^^^^^-./\\  ",
         " \\_)  ,.,  (_/  ",
         " |     W     |  ",
         " |     |     |  ",
         "  ;    |    ;   ",
-        "   '-_____-'    "
+        "   '-_____-'    ",
+        "                "
       ]
     }
 
@@ -218,15 +248,16 @@ module Main
     max_label_width = label.map(&.size).max
 
     # output
-    max_lines = [chosen_ascii.size, 5].max
+    max_lines = [chosen_ascii.size, 6].max
     (0...max_lines).map do |index|
       ascii_line = chosen_ascii.fetch(index, " " * chosen_ascii[0].size)
       info_line = {
-        1 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[0], "#{user}@#{host}"],
-        2 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[1], os],
-        3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[2], release],
-        4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[3], cpu],
-        5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset} -> %s" % [label[4], "#{mem_usage} MiB / #{mem} MiB"]
+        1 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[0], "#{user}@#{host}"],
+        2 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[1], os],
+        3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[2], shell],
+        4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[3], release],
+        5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[4], cpu],
+        6 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[5], "#{mem_usage} MiB / #{mem} MiB"]
       }.fetch(index, "")
 
       "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
