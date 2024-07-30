@@ -26,22 +26,27 @@ module Resource
   end
 
   def self.getPlatform : String
-    case runSysCommand("uname")
-    when /Linux/
-      "Linux #{runSysCommand("grep PRETTY_NAME /etc/os-release | cut -d = -f 2")}"
-    when /FreeBSD/
-      "FreeBSD"
-    when /OpenBSD/
-      "OpenBSD"
-    when /NetBSD/
-      "NetBSD"
+    release_file = "/etc/os-release"
+    uname = runSysCommand("uname")
+    if File.file?(release_file)
+      name = runSysCommand("grep PRETTY_NAME  #{release_file} | cut -d = -f 2")
     else
-      "Unsupported OS"
+      name = ""
     end
+    
+    "#{uname} #{name}"
   end
 
   def self.getRelease : String
-    runSysCommand("uname -r")
+    release_file = "/etc/os-release"
+    uname_version = runSysCommand("uname -r")
+    if File.file?(release_file)
+      distro_version = runSysCommand("grep VERSION_ID #{release_file} | cut -d = -f 2")
+    else
+      distro_version = ""
+    end
+    
+    "#{uname_version} #{distro_version}"
   end
 
   def self.getUser : String
@@ -122,7 +127,9 @@ module OptionHandler
         options.color = color
       end
       parser.on("-a ASCII", "--ascii ASCII", "Choose ASCII art") do |a|
-        raise OptionError.new("Invalid ASCII art option. Choose from: None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident") unless ["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD", "FreeBSDTrident"].includes?(a)
+        if !["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD", "FreeBSDTrident", "GhostBSD", "GhostBSDGhost"].includes?(a)
+          raise OptionError.new("Invalid ASCII art option. Choose from: None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident. GhostBSD, GhostBSDGhost")
+        end
         options.ascii = a
       end
       parser.on("-h", "--help", "Show help") { puts help_message; exit }
@@ -139,11 +146,12 @@ module OptionHandler
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase         Use lowercase labels
-    -s, --separator STRING  Separator [default = " -> ", can be blank, does not account for spacing]
+    -s, --separator STRING  Separator [default = " -> "]
+                            (can be blank, does not account for spacing)
     -c, --color COLOR       Pick a color output [default = 4]
                             (#{colors})
     -a, --ascii ASCII       Choose ASCII art [default = Tear]
-                            (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident)
+                            (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident, GhostBSD, GhostBSDGhost)
     -h, --help              Show help
     HELP
   end
@@ -238,6 +246,26 @@ module Main
         "  ;    |    ;   ",
         "   '-_____-'    ",
         "                "
+      ],
+      "GhostBSD" => [
+        "            ",
+        "    _____   ",
+        "   / __  )  ",
+        "  ( /_/ /   ",
+        "  _\\_, /    ",
+        " \\____/     ",
+        "            ",
+        "            "
+      ],
+      "GhostBSDGhost" => [
+        "   _______   ",
+        "  /       \\  ",
+        "  | () () |  ",
+        "  |       |  ",
+        "  |   3   |  ",
+        "  /       \\  ",
+        "  ^^^^^^^^^  ",
+        "              "
       ]
     }
 
