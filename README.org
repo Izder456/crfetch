@@ -19,6 +19,7 @@
     - =[*] OpenBSD's Puffy=
     - =[*] NetBSD's Flag=
     - =[*] FreeBSD's Orb/Beastie=
+    - =[*] GhostBSD's "g" & Ghost=
 
 ** Why another fetching utility?
 
@@ -69,11 +70,12 @@ $ install ./bin/crfetch /path/to/install/destination
 #+BEGIN_SRC
 Usage: crfetch [options]
 -l, --lowercase         Use lowercase labels
--s, --separator STRING  Separator [default = " -> ", can be blank, does not account for spacing]
+-s, --separator STRING  Separator [default = " -> "]
+                        (can be blank, does not account for spacing)
 -c, --color COLOR       Pick a color output [default = 4]
                         (0 1 2 3 4 5 6 7)
 -a, --ascii ASCII       Choose ASCII art [default = Tear]
-                        (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident)
+                        (None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident, GhostBSD, GhostBSDGhost)
 -h, --help              Show help
 #+END_SRC
 
