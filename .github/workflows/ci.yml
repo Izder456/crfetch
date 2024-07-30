@@ -28,7 +28,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Run OpenBSD
-      uses: vmactions/openbsd-vm@v1
+      uses: vmactions/openbsd-vm@v1.0.8
       with:
         usesh: true
         sync: sshfs
@@ -45,7 +45,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Run FreeBSD
-      uses: vmactions/freebsd-vm@v1
+      uses: vmactions/freebsd-vm@v1.0.8
       with:
         usesh: true
         sync: sshfs
