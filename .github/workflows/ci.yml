@@ -8,7 +8,6 @@ on:
 
 jobs:
   linux:
-
     runs-on: ubuntu-latest
     name: Linux CI
 
@@ -21,18 +20,35 @@ jobs:
       run: shards install
     - name: Run tests
       run: crystal spec
-      
+
   openbsd:
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     name: OpenBSD CI
-    
+
     steps:
     - uses: actions/checkout@v4
-    - name: Install dependencies
-      id: test
+    - name: Run OpenBSD
       uses: vmactions/openbsd-vm@v1
       with:
-        release: "7.5"
         usesh: true
-        prepare: pkg_add crystal
-        run: shards install
+        prepare: |
+          pkg_add crystal
+        run: |
+          shards install
+          crystal spec
+
+  freebsd:
+    runs-on: macos-12
+    name: FreeBSD CI
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run FreeBSD
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y crystal shards
+        run: |
+          shards install
+          crystal spec
