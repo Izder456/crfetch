@@ -31,6 +31,7 @@ jobs:
       uses: vmactions/openbsd-vm@v1
       with:
         usesh: true
+        sync: sshfs
         prepare: |
           pkg_add crystal
         run: |
@@ -47,6 +48,7 @@ jobs:
       uses: vmactions/freebsd-vm@v1
       with:
         usesh: true
+        sync: sshfs
         prepare: |
           pkg install -y crystal shards
         run: |
