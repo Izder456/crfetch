@@ -1,0 +1,38 @@
+name: Crystal CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  linux:
+
+    runs-on: ubuntu-latest
+    name: Linux CI
+
+    container:
+      image: crystallang/crystal
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: shards install
+    - name: Run tests
+      run: crystal spec
+      
+  openbsd:
+    runs-on: ubuntu-latest
+    name: OpenBSD CI
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      id: OpenBSD Deps
+      uses: vmactions/openbsd-vm@v1
+      with:
+        release: "7.5"
+        usesh: true
+        prepare: pkg_add crystal
+        run: shards install
