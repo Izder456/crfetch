@@ -32,6 +32,8 @@ jobs:
   create-release:
     needs: build-freebsd
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Create Release
       id: create_release
@@ -39,8 +41,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: v1.2.0.${{ github.run_number }}
+        release_name: Release v1.2.0.${{ github.run_number }}
         draft: true
         prerelease: true
     - uses: actions/download-artifact@v3
