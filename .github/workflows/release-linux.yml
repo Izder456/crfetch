@@ -41,10 +41,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.2.0.${{ github.run_number }}
-        release_name: Release v1.2.0.${{ github.run_number }}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
         draft: true
-        prerelease: true
+        prerelease: false
     - uses: actions/download-artifact@v3
     - name: Upload Linux Asset
       uses: actions/upload-release-asset@v1
