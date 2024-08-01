@@ -1,15 +1,25 @@
 * Cr(y)fetch
 #+begin_html
 <center>
-    <div>
-        <img alt="License" src="https://badgen.net/github/license/izder456/crfetch">
-        <img alt="Stargazers" src="https://badgen.net/github/stars/izder456/crfetch">
+    <div style="max-width: fit-content; margin-inline: auto;">
+        <a href="https://github.com/Izder456/crfetch/blob/main/LICENSE">
+            <img alt="License" src="https://badgen.net/github/license/izder456/crfetch">
+        </a>
+        <a href="https://github.com/Izder456/crfetch/stargazers">
+            <img alt="Stargazers" src="https://badgen.net/github/stars/izder456/crfetch">
+        </a>
         <br>
-        <img alt="Linux CI" src="https://github.com/izder456/crfetch/workflows/Linux%20CI/badge.svg">
-        <img alt="FreeBSD CI" src="https://github.com/izder456/crfetch/workflows/FreeBSD%20CI/badge.svg">
-        <img alt="OpenBSD CI" src="https://github.com/izder456/crfetch/workflows/OpenBSD%20CI/badge.svg">
+        <a href="https://github.com/Izder456/crfetch/actions/workflows/ci-linux.yml">
+        <img src="https://github.com/Izder456/crfetch/actions/workflows/ci-linux.yml/badge.svg" alt="Linux CI">
+        </a>
+        <a href="https://github.com/Izder456/crfetch/actions/workflows/ci-freebsd.yml">
+        <img src="https://github.com/Izder456/crfetch/actions/workflows/ci-freebsd.yml/badge.svg" alt="FreeBSD CI">
+        </a>
+        <a href="https://github.com/Izder456/crfetch/actions/workflows/ci-openbsd.yml">
+        <img src="https://github.com/Izder456/crfetch/actions/workflows/ci-openbsd.yml/badge.svg" alt="OpenBSD CI">
+        </a>
     </div>
-    <hr style="width:35%">
+    <br>
     <div>
         <img src="assets/screenshot.png" />
     </div>
