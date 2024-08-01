@@ -1,26 +1,32 @@
 * Cr(y)fetch
-
-=CryFetch=
-
-#+html: <img src="assets/screenshot.png" />
+#+begin_html
+<center>
+    <div>
+        <img alt="License" src="https://badgen.net/github/license/izder456/crfetch">
+        <img alt="Stargazers" src="https://badgen.net/github/stars/izder456/crfetch">
+        <br>
+        <img alt="Linux CI" src="https://github.com/izder456/crfetch/workflows/Linux%20CI/badge.svg">
+        <img alt="FreeBSD CI" src="https://github.com/izder456/crfetch/workflows/FreeBSD%20CI/badge.svg">
+        <img alt="OpenBSD CI" src="https://github.com/izder456/crfetch/workflows/OpenBSD%20CI/badge.svg">
+    </div>
+    <hr style="width:35%">
+    <div>
+        <img src="assets/screenshot.png" />
+    </div>
+</center>
+#+end_html
 
 /a system fetching utility, written in crystal/
 
-** Planned Feature List
 
-- =[*] Colorize output=
-- =[*] Threading System Commands=
-- =[*] ASCII art=
-- =[*] Options=:
-  - =[*] Tear Color=
-  - =[*] Lowercase output labels=
-  - =[*] ASCII Logos=:
-    - =[*] Linux's Tux=
-    - =[*] OpenBSD's Puffy=
-    - =[*] NetBSD's Flag=
-    - =[*] FreeBSD's Orb/Beastie=
-    - =[*] GhostBSD's "g" & Ghost=
+** Supported Operating Systems
 
+- Linux (any distro, as long as you can compile crystal)
+- FreeBSD (no issues)
+- GhostBSD (no issues)
+- OpenBSD (/right now, 7.5-STABLE wont work because lang/crystal/ is broken. on -CURRENT, however things are fine.)
+- NetBSD (*untested* as the crystal pkgsrc package is crusty as hell. If/when that is updated, I'll look into this with more scrutiny)
+  
 ** Why another fetching utility?
 
     - *It's fast*

@@ -52,6 +52,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./crfetch-freebsd-x86_64/your_app
+        asset_path: ./crfetch-freebsd-x86_64/crfetch
         asset_name: crfetch-freebsd-x86_64
         asset_content_type: application/octet-stream
