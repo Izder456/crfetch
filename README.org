@@ -21,11 +21,16 @@
 
 ** Supported Operating Systems
 
-- Linux (any distro, as long as you can compile crystal)
-- FreeBSD (no issues)
-- GhostBSD (no issues)
-- OpenBSD (/right now, 7.5-STABLE wont work because lang/crystal/ is broken. on -CURRENT, however things are fine.)
-- NetBSD (*untested* as the crystal pkgsrc package is crusty as hell. If/when that is updated, I'll look into this with more scrutiny)
+- Linux
+  - (any distro, as long as you can compile crystal code)
+- FreeBSD
+  - (no issues)
+- GhostBSD
+  - (no issues)
+- OpenBSD
+  - (/right now, 7.5-STABLE does not work because lang/crystal/ is broken. On -CURRENT, however, things are fine)
+- NetBSD
+  - (*untested* as the crystal pkgsrc package is crusty as hell. If/when that is updated, I'll look into this with more scrutiny)
   
 ** Why another fetching utility?
 
