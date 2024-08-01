@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Run OpenBSD
+    - name: Run build
       uses: vmactions/openbsd-vm@v1.0.8
       with:
         usesh: true
@@ -22,4 +22,4 @@ jobs:
           pkg_add crystal
         run: |
           shards install
-          crystal spec
+	  shards build --stats --progress --time --verbose --no-color

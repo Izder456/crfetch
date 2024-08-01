@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Run FreeBSD
+    - name: Run build
       uses: vmactions/freebsd-vm@v1.0.8
       with:
         usesh: true
@@ -22,4 +22,4 @@ jobs:
           pkg install -y crystal shards
         run: |
           shards install
-          crystal spec
+          shards build --stats --progress --time --verbose --no-color
