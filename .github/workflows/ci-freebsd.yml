@@ -1,0 +1,25 @@
+name: FreeBSD CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  freebsd:
+    runs-on: ubuntu-latest
+    name: FreeBSD CI
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run FreeBSD
+      uses: vmactions/freebsd-vm@v1.0.8
+      with:
+        usesh: true
+        sync: sshfs
+        prepare: |
+          pkg install -y crystal shards
+        run: |
+          shards install
+          crystal spec

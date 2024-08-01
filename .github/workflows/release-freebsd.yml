@@ -1,0 +1,55 @@
+name: FreeBSD Release
+
+on:
+  workflow_run:
+    workflows: ["FreeBSD CI"]
+    types:
+      - completed
+
+jobs:
+  build-freebsd:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    name: Build FreeBSD Binary
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build on FreeBSD
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y crystal shards
+        run: |
+          shards install
+          crystal build --static --release src/crfetch.cr
+    - name: Upload FreeBSD binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: crfetch-freebsd-x86_64
+        path: crfetch
+
+  create-release:
+    needs: build-freebsd
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: true
+    - uses: actions/download-artifact@v3
+    - name: Upload FreeBSD Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./crfetch-freebsd-x86_64/your_app
+        asset_name: crfetch-freebsd-x86_64
+        asset_content_type: application/octet-stream

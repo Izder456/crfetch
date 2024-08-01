@@ -1,0 +1,25 @@
+name: OpenBSD CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  openbsd:
+    runs-on: ubuntu-latest
+    name: OpenBSD CI
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run OpenBSD
+      uses: vmactions/openbsd-vm@v1.0.8
+      with:
+        usesh: true
+        sync: sshfs
+        prepare: |
+          pkg_add crystal
+        run: |
+          shards install
+          crystal spec

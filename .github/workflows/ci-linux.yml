@@ -1,0 +1,22 @@
+name: Linux CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    name: Linux CI
+
+    container:
+      image: crystallang/crystal
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: shards install
+    - name: Run tests
+      run: crystal spec

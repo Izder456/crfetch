@@ -1,0 +1,55 @@
+name: OpenBSD Release
+
+on:
+  workflow_run:
+    workflows: ["OpenBSD CI"]
+    types:
+      - completed
+
+jobs:
+  build-openbsd:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    name: Build OpenBSD Binary
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build on OpenBSD
+      uses: vmactions/openbsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg_add crystal
+        run: |
+          shards install
+          crystal build --static --release src/crfetch.cr
+    - name: Upload OpenBSD binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: crfetch-openbsd-x86_64
+        path: crfetch
+
+  create-release:
+    needs: build-openbsd
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: true
+    - uses: actions/download-artifact@v3
+    - name: Upload OpenBSD Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./crfetch-openbsd-x86_64/crfetch
+        asset_name: crfetch-openbsd-x86_64
+        asset_content_type: application/octet-stream
