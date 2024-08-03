@@ -46,15 +46,15 @@
 
     - *It's fast*
 
-        | Command       |     Mean [ms] |    Min [ms] |    Max [ms] |      Relative |
-        |---------------+---------------+-------------+-------------+---------------|
-        | crfetch       |  43.7 ± 10.2  |        36.2 |       105.9 |         1.00  |
-        | ufetch        | 101.1 ± 20.7  |        89.5 |       187.7 |  2.31 ± 0.72  |
-        | pfetch        | 255.6 ± 30.6  |       226.3 |       342.3 |  5.84 ± 1.53  |
-        | screenfetch   | 1222.0 ± 40.3 |      1150.4 |      1354.7 | 27.95 ± 6.56  |
-        | neofetch      | 1277.4 ± 33.1 |      1222.4 |      1359.0 | 29.21 ± 6.83  |
+        | Command     | Mean [ms]     | Min [ms] | Max [ms] | ReLative     |
+        |-------------+---------------+----------+----------+--------------|
+        | =crfetch=     | 23.5 ± 3.8    |     17.3 |     36.2 | 1.00         |
+        | =ufetch=      | 77.9 ± 3.2    |     71.6 |     89.0 | 3.32 ± 0.56  |
+        | =pfetch=      | 41.9 ± 13.4   |     32.8 |    139.3 | 1.79 ± 0.64  |
+        | =screenfetch= | 863.3 ± 125.4 |    771.6 |   1897.3 | 36.80 ± 8.03 |
+        | =neofetch=    | 754.6 ± 107.3 |    557.1 |   1313.4 | 32.17 ± 6.95 |
 
-        /Recorded on a Panasonic Let's Note CF-NX4 running OpenBSD, with an i5-5300U and 16GB of ram./
+      /tested on a HP Z420 Workstation with an Intel(R) Xeon(R) E5-1607 v2 and 64GB ECC DDR3 RAM running FreeBSD 14.1p2/
 
     - *It's minimal*
 
