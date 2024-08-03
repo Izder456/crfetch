@@ -15,14 +15,10 @@ end
 
 module Resource
   def self.runSysCommand(command : String) : String
-    channel = Channel(String).new
-    spawn do
-      output = IO::Memory.new
-      Process.run(command, shell: true, output: output)
-      output.close
-      channel.send(output.to_s)
-    end
-    channel.receive.strip
+    output = IO::Memory.new
+    Process.run(command, shell: true, output: output)
+    output.close
+    output.to_s.strip
   end
 
   def self.getPlatform : String
@@ -33,7 +29,7 @@ module Resource
     else
       name = ""
     end
-    
+
     "#{uname} #{name}"
   end
 
@@ -45,7 +41,7 @@ module Resource
     else
       distro_version = ""
     end
-    
+
     "#{uname_version} #{distro_version}"
   end
 
@@ -161,15 +157,35 @@ module Main
   def self.run
     options = OptionHandler.parse
 
-    # get resources
-    user = Resource.getUser
-    host = Resource.getHost
-    shell = Resource.getShell
-    os = Resource.getPlatform
-    release = Resource.getRelease
-    cpu = Resource.getCpu
-    mem_usage = Resource.getMemoryUsage
-    mem = Resource.getMemory
+    # create channels for each resource
+    user_ch = Channel(String).new
+    host_ch = Channel(String).new
+    shell_ch = Channel(String).new
+    os_ch = Channel(String).new
+    release_ch = Channel(String).new
+    cpu_ch = Channel(String).new
+    mem_usage_ch = Channel(String).new
+    mem_ch = Channel(String).new
+
+    # spawn fibers to fetch resources concurrently
+    spawn { user_ch.send(Resource.getUser) }
+    spawn { host_ch.send(Resource.getHost) }
+    spawn { shell_ch.send(Resource.getShell) }
+    spawn { os_ch.send(Resource.getPlatform) }
+    spawn { release_ch.send(Resource.getRelease) }
+    spawn { cpu_ch.send(Resource.getCpu) }
+    spawn { mem_usage_ch.send(Resource.getMemoryUsage) }
+    spawn { mem_ch.send(Resource.getMemory) }
+
+    # receive values from channels
+    user = user_ch.receive
+    host = host_ch.receive
+    shell = shell_ch.receive
+    os = os_ch.receive
+    release = release_ch.receive
+    cpu = cpu_ch.receive
+    mem_usage = mem_usage_ch.receive
+    mem = mem_ch.receive
 
     # variables for formatting
     ## styles

@@ -23,3 +23,4 @@ jobs:
         run: |
           shards install
           shards build --stats --progress --time --verbose --no-color
+          ./bin/crfetch

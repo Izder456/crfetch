@@ -20,3 +20,5 @@ jobs:
       run: shards install
     - name: Run build
       run: shards build --stats --progress --time --verbose --no-color
+    - name: Run Program
+      run: ./bin/crfetch
