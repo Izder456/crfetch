@@ -5,7 +5,7 @@ module Manip
   # Use a constant here
   MEBIBYTE = 1048576
 
-  def self.bytesToMebibytes(bytes : String) : String
+  def self.bytes_to_mebibytes(bytes : String) : String
     # Implement turning bytes into Mebibytes
     bytes = bytes.strip.to_f / MEBIBYTE
 
@@ -14,18 +14,23 @@ module Manip
 end
 
 module Resource
-  def self.runSysCommand(command : String) : String
-    output = IO::Memory.new
-    Process.run(command, shell: true, output: output)
-    output.close
-    output.to_s.strip
+  private def self.uname(argument : String) : String
+    `uname #{argument}`.strip
   end
 
-  def self.getPlatform : String
+  private def self.scrape_file(query : String, file : String) : String
+    release_file = file
+    `grep #{query} #{release_file}`
+      .split('=', 2)
+      .last
+      .strip('"')
+  end
+
+  def self.get_platform : String
     release_file = "/etc/os-release"
-    uname = runSysCommand("uname")
+    uname = self.uname("")
     if File.file?(release_file)
-      name = runSysCommand("grep PRETTY_NAME  #{release_file} | cut -d = -f 2")
+      name = self.scrape_file("PRETTY_NAME", release_file)
     else
       name = ""
     end
@@ -33,11 +38,11 @@ module Resource
     "#{uname} #{name}"
   end
 
-  def self.getRelease : String
+  def self.get_release : String
     release_file = "/etc/os-release"
-    uname_version = runSysCommand("uname -r")
+    uname_version = self.uname("-r")
     if File.file?(release_file)
-      distro_version = runSysCommand("grep VERSION_ID #{release_file} | cut -d = -f 2")
+      distro_version = self.scrape_file("VERSION_ID", release_file)
     else
       distro_version = ""
     end
@@ -45,52 +50,52 @@ module Resource
     "#{uname_version} #{distro_version}"
   end
 
-  def self.getUser : String
+  def self.get_user : String
     env = ENV["USER"]
     user = env || "Could not get $USER"
     user.to_s
   end
 
-  def self.getHost : String
-    runSysCommand("hostname")
+  def self.get_host : String
+    `hostname`
   end
 
-  def self.getShell : String
+  def self.get_shell : String
     path = ENV["SHELL"]
     shell = File.basename(path) if path || "Could not get $SHELL"
     shell.to_s
   end
 
-  def self.getMemory : String
-    case getPlatform
+  def self.get_memory : String
+    case get_platform
     when /Linux/
-      memory = runSysCommand("free -b | awk '/Mem/ {print $2}'")
+      memory = `free -b | awk '/Mem/ {print $2}'`
     when /BSD/
-      memory = runSysCommand("sysctl -n hw.physmem")
+      memory = `sysctl -n hw.physmem`
     else
       memory = "0"
     end
-    Manip.bytesToMebibytes(memory)
+    Manip.bytes_to_mebibytes(memory)
   end
 
-  def self.getMemoryUsage : String
-    case getPlatform
+  def self.get_memory_usage : String
+    case get_platform
     when /Linux/
-      used_memory = runSysCommand("free -b | awk '/Mem/ {print $3}'")
+      used_memory = `free -b | awk '/Mem/ {print $3}'`
     when /BSD/
-      used_memory = runSysCommand("vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'")
+      used_memory = `vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'`
     else
       used_memory = "0"
     end
-    Manip.bytesToMebibytes(used_memory)
+    Manip.bytes_to_mebibytes(used_memory)
   end
 
-  def self.getCpu : String
-    case getPlatform
+  def self.get_cpu : String
+    case get_platform
     when /Linux/
-      runSysCommand("lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'")
+      `lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'`
     when /BSD/
-      runSysCommand("sysctl -n hw.model")
+      `sysctl -n hw.model`
     else
       "Could not get CPU"
     end
@@ -99,33 +104,28 @@ end
 
 module OptionHandler
   class Options
-    property lowercase : Bool = false    # Default UPCASE
-    property color : Int32 = 4           # Default Blue
-    property ascii : String = "Tear"     # Default ASCII
-    property separator : String = " -> " # Default Separator
+    property lowercase = false
+    property color = 4
+    property ascii = "Tear"
+    property separator = " -> "
   end
 
-  # Inherit Exception class
-  class OptionError < Exception end
+  class OptionError < Exception; end
 
-  def self.parse : Options
+  def self.parse
     options = Options.new
 
     OptionParser.parse do |parser|
       parser.on("-l", "--lowercase", "Use lowercase labels") { options.lowercase = true }
-      parser.on("-s STRING", "--separator STRING", "Separator") do |s|
-        raise OptionError.new("Invalid Separator. Please provide a separator string") if s.nil?
-        options.separator = s
-      end
+      parser.on("-s STRING", "--separator STRING", "Separator") { |s| options.separator = s || raise OptionError.new("Invalid Separator") }
       parser.on("-c COLOR", "--color COLOR", "Pick a color output") do |c|
         color = c.to_i?
-        raise OptionError.new("Invalid color. Please choose a value between 0 and 7.") if color.nil? || color < 0 || color > 7
+        raise OptionError.new("Invalid color (0-7)") unless color && (0..7).includes?(color)
         options.color = color
       end
       parser.on("-a ASCII", "--ascii ASCII", "Choose ASCII art") do |a|
-        if !["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD", "FreeBSDTrident", "GhostBSD", "GhostBSDGhost"].includes?(a)
-          raise OptionError.new("Invalid ASCII art option. Choose from: None, Tear, Linux, OpenBSD, NetBSD, FreeBSD, FreeBSDTrident. GhostBSD, GhostBSDGhost")
-        end
+        valid_ascii = ["None", "Tear", "Linux", "OpenBSD", "NetBSD", "FreeBSD", "FreeBSDTrident", "GhostBSD", "GhostBSDGhost"]
+        raise OptionError.new("Invalid ASCII art option") unless valid_ascii.includes?(a)
         options.ascii = a
       end
       parser.on("-h", "--help", "Show help") { puts help_message; exit }
@@ -137,13 +137,12 @@ module OptionHandler
     exit(1)
   end
 
-  def self.help_message : String
+  def self.help_message
     colors = (30..37).map { |c| "\e[#{c}m#{c - 30}\e[0m" }.join(" ")
     <<-HELP
     Usage: crfetch [options]
     -l, --lowercase         Use lowercase labels
     -s, --separator STRING  Separator [default = " -> "]
-                            (can be blank, does not account for spacing)
     -c, --color COLOR       Pick a color output [default = 4]
                             (#{colors})
     -a, --ascii ASCII       Choose ASCII art [default = Tear]
@@ -157,35 +156,27 @@ module Main
   def self.run
     options = OptionHandler.parse
 
-    # create channels for each resource
-    user_ch = Channel(String).new
-    host_ch = Channel(String).new
-    shell_ch = Channel(String).new
-    os_ch = Channel(String).new
-    release_ch = Channel(String).new
-    cpu_ch = Channel(String).new
-    mem_usage_ch = Channel(String).new
-    mem_ch = Channel(String).new
+    # define resources and their corresponding methods
+    resources = {
+      "user" => -> { Resource.get_user },
+      "host" => -> { Resource.get_host },
+      "shell" => -> { Resource.get_shell },
+      "os" => -> { Resource.get_platform },
+      "release" => -> { Resource.get_release },
+      "cpu" => -> { Resource.get_cpu },
+      "mem_usage" => -> { Resource.get_memory_usage },
+      "mem" => -> { Resource.get_memory }
+    }
 
-    # spawn fibers to fetch resources concurrently
-    spawn { user_ch.send(Resource.getUser) }
-    spawn { host_ch.send(Resource.getHost) }
-    spawn { shell_ch.send(Resource.getShell) }
-    spawn { os_ch.send(Resource.getPlatform) }
-    spawn { release_ch.send(Resource.getRelease) }
-    spawn { cpu_ch.send(Resource.getCpu) }
-    spawn { mem_usage_ch.send(Resource.getMemoryUsage) }
-    spawn { mem_ch.send(Resource.getMemory) }
+    # create channels and spawn fibers to fetch resources concurrently
+    channels = {} of String => Channel(String)
+    resources.each do |key, method|
+      channels[key] = Channel(String).new
+      spawn { channels[key].send(method.call) }
+    end
 
     # receive values from channels
-    user = user_ch.receive
-    host = host_ch.receive
-    shell = shell_ch.receive
-    os = os_ch.receive
-    release = release_ch.receive
-    cpu = cpu_ch.receive
-    mem_usage = mem_usage_ch.receive
-    mem = mem_ch.receive
+    user, host, shell, os, release, cpu, mem_usage, mem = resources.keys.map { |key| channels[key].receive }
 
     # variables for formatting
     ## styles
