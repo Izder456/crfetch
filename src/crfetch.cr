@@ -83,7 +83,7 @@ module Resource
     when /Linux/
       used_memory = `free -b | awk '/Mem/ {print $3}'`
     when /BSD/
-      used_memory = `vmstat -s | awk '/pages active/ {printf \"%.2f\\n\", $1*4096}'`
+      used_memory = `vmstat -s | awk '/pages active/ {printf "%.2f\\n", $1*4096}'`
     else
       used_memory = "0"
     end
@@ -158,14 +158,14 @@ module Main
 
     # define resources and their corresponding methods
     resources = {
-      "user" => -> { Resource.get_user },
-      "host" => -> { Resource.get_host },
-      "shell" => -> { Resource.get_shell },
-      "os" => -> { Resource.get_platform },
-      "release" => -> { Resource.get_release },
-      "cpu" => -> { Resource.get_cpu },
+      "user"      => -> { Resource.get_user },
+      "host"      => -> { Resource.get_host },
+      "shell"     => -> { Resource.get_shell },
+      "os"        => -> { Resource.get_platform },
+      "release"   => -> { Resource.get_release },
+      "cpu"       => -> { Resource.get_cpu },
       "mem_usage" => -> { Resource.get_memory_usage },
-      "mem" => -> { Resource.get_memory }
+      "mem"       => -> { Resource.get_memory },
     }
 
     # create channels and spawn fibers to fetch resources concurrently
@@ -179,16 +179,16 @@ module Main
     user, host, shell, os, release, cpu, mem_usage, mem = resources.keys.map { |key| channels[key].receive }
 
     # variables for formatting
-    ## styles
+    # # styles
     bold = "\e[1m"
     reset = "\e[0m"
 
-    ## colors
+    # # colors
     colors = (30..37).map { |c| "\e[#{c}m" }
 
     # labels
     label = ["USER", "OS", "SHELL", "VER", "CPU", "MEM"]
-    ## set lowercase if lowercase
+    # # set lowercase if lowercase
     label = label.map(&.downcase) if options.lowercase
 
     # ASCII art
@@ -201,7 +201,7 @@ module Main
         "  /   \\  ",
         " |     | ",
         "  \\___/  ",
-        "         "
+        "         ",
       ],
       "Linux" => [
         "     ___     ",
@@ -211,7 +211,7 @@ module Main
         "  ( /  \\ {|  ",
         "  /\\ __)/,)  ",
         " (}\\____\\/   ",
-        "             "
+        "             ",
       ],
       "OpenBSD" => [
         "      _____      ",
@@ -221,18 +221,18 @@ module Main
         " |_  <   }  3 }  ",
         " / \\`   . `  /   ",
         "    /-_____-\\    ",
-        "                 "
+        "                 ",
       ],
       "NetBSD" => [
         "                       ",
-        " \\\\\\\`-______,----__    ",
+        " \\\\\\`-______,----__    ",
         "  \\\\  -  _  __,---\\`_  ",
         "   \\\\  ,  . \\`.____    ",
         "    \\\\-______,----\\`-  ",
         "     \\\\                ",
         "      \\\\               ",
         "       \\\\              ",
-        "                       "
+        "                       ",
       ],
       "FreeBSD" => [
         "                ",
@@ -242,7 +242,7 @@ module Main
         " |           |  ",
         "  ;         ;   ",
         "   '-_____-'    ",
-        "                "
+        "                ",
       ],
       "FreeBSDTrident" => [
         "                ",
@@ -252,7 +252,7 @@ module Main
         " |     |     |  ",
         "  ;    |    ;   ",
         "   '-_____-'    ",
-        "                "
+        "                ",
       ],
       "GhostBSD" => [
         "            ",
@@ -262,7 +262,7 @@ module Main
         "  _\\_, /    ",
         " \\____/     ",
         "            ",
-        "            "
+        "            ",
       ],
       "GhostBSDGhost" => [
         "   _______   ",
@@ -272,8 +272,8 @@ module Main
         "  |   3   |  ",
         "  /       \\  ",
         "  ^^^^^^^^^  ",
-        "              "
-      ]
+        "              ",
+      ],
     }
 
     # get chosen ascii art
@@ -292,7 +292,7 @@ module Main
         3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[2], shell],
         4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[3], release],
         5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[4], cpu],
-        6 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[5], "#{mem_usage} MiB / #{mem} MiB"]
+        6 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[5], "#{mem_usage} MiB / #{mem} MiB"],
       }.fetch(index, "")
 
       "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
