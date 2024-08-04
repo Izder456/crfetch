@@ -23,7 +23,7 @@ module Resource
     `grep #{query} #{release_file}`
       .split('=', 2)
       .last
-      .strip('"')
+      .delete('"')
   end
 
   def self.get_platform : String
