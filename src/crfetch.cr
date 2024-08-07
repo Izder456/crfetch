@@ -168,27 +168,35 @@ module Main
       "mem"       => -> { Resource.get_memory },
     }
 
-    # create channels and spawn fibers to fetch resources concurrently
-    channels = {} of String => Channel(String)
+    # create channel to act on
+    channel = Channel(Tuple(String, String)).new
+
+    # spawn fibers to concurrently fetch
     resources.each do |key, method|
-      channels[key] = Channel(String).new
-      spawn { channels[key].send(method.call) }
+      spawn { channel.send({key, method.call}) }
     end
 
-    # receive values from channels
-    user, host, shell, os, release, cpu, mem_usage, mem = resources.keys.map { |key| channels[key].receive }
+    # ensure all fibers are finished
+    Fiber.yield
+
+    # collect results from the channel
+    results = {} of String => String
+    resources.size.times do
+      key, value = channel.receive
+      results[key] = value
+    end
 
     # variables for formatting
-    # # styles
+    # styles
     bold = "\e[1m"
     reset = "\e[0m"
 
-    # # colors
+    # colors
     colors = (30..37).map { |c| "\e[#{c}m" }
 
     # labels
     label = ["USER", "OS", "SHELL", "VER", "CPU", "MEM"]
-    # # set lowercase if lowercase
+    # set lowercase if lowercase
     label = label.map(&.downcase) if options.lowercase
 
     # ASCII art
@@ -287,12 +295,12 @@ module Main
     (0...max_lines).map do |index|
       ascii_line = chosen_ascii.fetch(index, " " * chosen_ascii[0].size)
       info_line = {
-        1 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[0], "#{user}@#{host}"],
-        2 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[1], os],
-        3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[2], shell],
-        4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[3], release],
-        5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[4], cpu],
-        6 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[5], "#{mem_usage} MiB / #{mem} MiB"],
+        1 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[0], "#{results["user"]}@#{results["host"]}"],
+        2 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[1], results["os"]],
+        3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[2], results["shell"]],
+        4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[3], results["release"]],
+        5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[4], results["cpu"]],
+        6 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[5], "#{results["mem_usage"]} MiB / #{results["mem"]} MiB"],
       }.fetch(index, "")
 
       "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
