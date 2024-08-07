@@ -6,9 +6,9 @@ module Manip
   MEBIBYTE = 1048576
 
   def self.bytes_to_mebibytes(bytes : String) : String
-    # Implement turning bytes into Mebibytes
     bytes = bytes.strip.to_f / MEBIBYTE
 
+    # return with two decimal places
     "%.2f" % bytes
   end
 end
@@ -19,11 +19,12 @@ module Resource
   end
 
   private def self.scrape_file(query : String, file : String) : String
-    release_file = file
-    `grep #{query} #{release_file}`
-      .split('=', 2)
-      .last
-      .delete('"')
+    File.each_line(file) do |line|
+      if line.includes?(query)
+        return line.split('=', 2)[1].delete('"').strip
+      end
+    end
+    ""
   end
 
   def self.get_platform : String
@@ -57,7 +58,7 @@ module Resource
   end
 
   def self.get_host : String
-    `hostname`
+    System.hostname
   end
 
   def self.get_shell : String
@@ -110,6 +111,7 @@ module OptionHandler
     property separator = " -> "
   end
 
+  # inherit the Exception class
   class OptionError < Exception; end
 
   def self.parse
