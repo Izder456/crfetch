@@ -1,4 +1,3 @@
-require "process"
 require "option_parser"
 
 module Manip
