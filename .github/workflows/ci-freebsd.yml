@@ -23,25 +23,5 @@ jobs:
         run: |
           shards install
           shards build --stats --progress --time --verbose --no-color
-    - name: Run program with -h
-      uses: vmactions/freebsd-vm@v1.0.8
-      with:
-        usesh: true
-        sync: sshfs
-        prepare: |
-          pkg install -y crystal shards
-        run: |
-          shards install
-          shards build --stats --progress --time --verbose --no-color
           ./bin/crfetch -h
-    - name: Run program
-      uses: vmactions/freebsd-vm@v1.0.8
-      with:
-        usesh: true
-        sync: sshfs
-        prepare: |
-          pkg install -y crystal shards
-        run: |
-          shards install
-          shards build --stats --progress --time --verbose --no-color
           ./bin/crfetch
