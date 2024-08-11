@@ -1,33 +1,32 @@
 * Cr(y)fetch
 #+begin_html
 <center>
-    <div style="max-width: fit-content; margin-inline: auto;">
-        <a href="https://github.com/Izder456/crfetch/blob/main/LICENSE">
-            <img alt="License" src="https://badgen.net/github/license/izder456/crfetch">
-        </a>
-        <a href="https://github.com/Izder456/crfetch/stargazers">
-            <img alt="Stargazers" src="https://badgen.net/github/stars/izder456/crfetch">
-        </a>
-        <br>
-        <a href="https://github.com/Izder456/crfetch/actions/workflows/ci-linux.yml">
-        <img src="https://github.com/Izder456/crfetch/actions/workflows/ci-linux.yml/badge.svg" alt="Linux CI">
-        </a>
-        <a href="https://github.com/Izder456/crfetch/actions/workflows/ci-freebsd.yml">
-        <img src="https://github.com/Izder456/crfetch/actions/workflows/ci-freebsd.yml/badge.svg" alt="FreeBSD CI">
-        </a>
-        <a href="https://github.com/Izder456/crfetch/actions/workflows/ci-openbsd.yml">
-        <img src="https://github.com/Izder456/crfetch/actions/workflows/ci-openbsd.yml/badge.svg" alt="OpenBSD CI">
-        </a>
-    </div>
-    <br>
-    <div>
-        <img src="assets/screenshot.png" />
-    </div>
+<div style="max-width: fit-content; margin-inline: auto;">
+<a href="https://github.com/Izder456/crfetch/blob/main/LICENSE">
+<img alt="License" src="https://badgen.net/github/license/izder456/crfetch">
+</a>
+<a href="https://github.com/Izder456/crfetch/stargazers">
+<img alt="Stargazers" src="https://badgen.net/github/stars/izder456/crfetch">
+</a>
+<br>
+<a href="https://github.com/Izder456/crfetch/actions/workflows/ci-linux.yml">
+<img src="https://github.com/Izder456/crfetch/actions/workflows/ci-linux.yml/badge.svg" alt="Linux CI">
+</a>
+<a href="https://github.com/Izder456/crfetch/actions/workflows/ci-freebsd.yml">
+<img src="https://github.com/Izder456/crfetch/actions/workflows/ci-freebsd.yml/badge.svg" alt="FreeBSD CI">
+</a>
+<a href="https://github.com/Izder456/crfetch/actions/workflows/ci-openbsd.yml">
+<img src="https://github.com/Izder456/crfetch/actions/workflows/ci-openbsd.yml/badge.svg" alt="OpenBSD CI">
+</a>
+</div>
+<br>
+<div>
+<img src="assets/screenshot.png" />
+</div>
 </center>
 #+end_html
 
 /a system fetching utility, written in crystal/
-
 
 ** Supported Operating Systems
 
@@ -44,26 +43,26 @@
   
 ** Why another fetching utility?
 
-    - *It's fast*
+- *It's fast*
 
-        | Command     | Mean [ms]     | Min [ms] | Max [ms] | ReLative     |
-        |-------------+---------------+----------+----------+--------------|
-        | =crfetch=     | 23.5 ± 3.8    |     17.3 |     36.2 | 1.00         |
-        | =ufetch=      | 77.9 ± 3.2    |     71.6 |     89.0 | 3.32 ± 0.56  |
-        | =pfetch=      | 41.9 ± 13.4   |     32.8 |    139.3 | 1.79 ± 0.64  |
-        | =screenfetch= | 863.3 ± 125.4 |    771.6 |   1897.3 | 36.80 ± 8.03 |
-        | =neofetch=    | 754.6 ± 107.3 |    557.1 |   1313.4 | 32.17 ± 6.95 |
+  | Command     | Mean [ms]     | Min [ms] | Max [ms] | ReLative     |
+  |-------------+---------------+----------+----------+--------------|
+  | =crfetch=     | 23.5 ± 3.8    |     17.3 |     36.2 | 1.00         |
+  | =ufetch=      | 77.9 ± 3.2    |     71.6 |     89.0 | 3.32 ± 0.56  |
+  | =pfetch=      | 41.9 ± 13.4   |     32.8 |    139.3 | 1.79 ± 0.64  |
+  | =screenfetch= | 863.3 ± 125.4 |    771.6 |   1897.3 | 36.80 ± 8.03 |
+  | =neofetch=    | 754.6 ± 107.3 |    557.1 |   1313.4 | 32.17 ± 6.95 |
 
-      /tested on a HP Z420 Workstation with an Intel(R) Xeon(R) E5-1607 v2 and 64GB ECC DDR3 RAM running FreeBSD 14.1p2/
+  /tested on a HP Z420 Workstation with an Intel(R) Xeon(R) E5-1607 v2 and 64GB ECC DDR3 RAM running FreeBSD 14.1p2/
 
-    - *It's minimal*
+- *It's minimal*
 
-        Configuring is done via runtime command switches. You want a config file? Add the switches you want to your shell profile as an alias.
+  Configuring is done via runtime command switches. You want a config file? Add the switches you want to your shell profile as an alias.
 
-    - *It's fun to write crystal*
+- *It's fun to write crystal*
 
-        IMO, crystal doesn't get enough love (+probably cos the tooling kinda sucks+).
-        I also wanted an excuse to learn a new programming language.
+  IMO, crystal doesn't get enough love (+probably cos the tooling kinda sucks+).
+  I also wanted an excuse to learn a new programming language.
 
 * Deps
 
