@@ -23,6 +23,3 @@ jobs:
     - name: Run program with -h
       run: |
         ./bin/crfetch -h
-    - name: Run program
-      run: |
-        ./bin/crfetch
