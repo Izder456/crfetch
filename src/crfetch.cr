@@ -13,16 +13,6 @@ module Manip
 end
 
 module Resource
-  lib LibC
-    CTL_KERN = 1
-    CTL_HW = 6
-    KERN_OSRELEASE = 2
-    HW_MODEL = 2
-    HW_PHYSMEM = 5
-
-    fun sysctl(name : Int32*, namelen : UInt32, oldp : Void*, oldlenp : UInt64*, newp : Void*, newlen : UInt64) : Int32
-  end
-
   private def self.scrape_file(query : String, file : String) : String
     File.each_line(file) do |line|
       if line.includes?(query)
@@ -48,28 +38,12 @@ module Resource
     "#{uname} #{name}"
   end
 
-  private def self.get_bsd_osrelease : String
-    mib = Pointer(Int32).malloc(2)
-    mib[0] = LibC::CTL_KERN
-    mib[1] = LibC::KERN_OSRELEASE
-
-    osrelease = Pointer(UInt8).malloc(256)
-    len = Pointer(UInt64).malloc(1)
-    len.value = 256_u64
-
-    if LibC.sysctl(mib, 2_u32, osrelease.as(Void*), len, nil, 0_u64) == -1
-        raise "sysctl call failed"
-    end
-
-    String.new(osrelease, len.value.to_i32 - 1)
-  end
-
   def self.get_release : String
     release_file = "/etc/os-release"
 
     case get_platform
     when /BSD/
-      kernel_version = get_bsd_osrelease
+      kernel_version = `sysctl -n kern.osrelease`
     else
       kernel_version = self.uname("-r")
     end
@@ -98,28 +72,12 @@ module Resource
     shell.to_s
   end
 
-  private def self.get_bsd_memory : UInt64
-    mib = Pointer(Int32).malloc(2)
-    mib[0] = LibC::CTL_HW
-    mib[1] = LibC::HW_PHYSMEM
-
-    mem = Pointer(UInt64).malloc(1)
-    size = Pointer(UInt64).malloc(1)
-    size.value = UInt64.new(sizeof(UInt64))
-
-    if LibC.sysctl(mib, 2_u32, mem.as(Void*), size, nil, 0_u64) == -1
-      raise "sysctl call failed"
-    end
-
-    mem.value
-  end
-  
   def self.get_memory : String
     case get_platform
     when /Linux/
       memory = `free -b | awk '/Mem/ {print $2}'`
     when /BSD/
-      memory = self.get_bsd_memory
+      memory = `sysctl -n hw.physmem`
     else
       memory = "0"
     end
@@ -138,28 +96,12 @@ module Resource
     Manip.bytes_to_mebibytes(used_memory)
   end
 
-  private def self.get_bsd_cpu_model : String
-    mib = Pointer(Int32).malloc(2)
-    mib[0] = LibC::CTL_HW
-    mib[1] = LibC::HW_MODEL
-
-    buffer = Pointer(UInt8).malloc(256)
-    size = Pointer(UInt64).malloc(1)
-    size.value = 256_u64
-
-    if LibC.sysctl(mib, 2_u32, buffer.as(Void*), size, nil, 0_u64) == -1
-      raise "sysctl call failed"
-    end
-
-    String.new(buffer, size.value.to_i32 - 1)
-  end
-  
   def self.get_cpu : String
     case get_platform
     when /Linux/
       `lscpu | grep 'Model name'| cut -d : -f 2 | awk '{$1=$1}1'`
     when /BSD/
-      self.get_bsd_cpu_model
+      `sysctl -n hw.model`
     else
       "Could not get CPU"
     end
