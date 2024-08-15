@@ -218,6 +218,97 @@ module OptionHandler
 end
 
 module Main
+
+  
+  ASCII_ART = {
+    "None" => Array.new(7, "  "),
+    "Tear" => [
+      "         ",
+      "    ,    ",
+      "   / \\   ",
+      "  /   \\  ",
+      " |     | ",
+      "  \\___/  ",
+      "         ",
+    ],
+    "Linux" => [
+      "     ___     ",
+      "    [..,|    ",
+      "    [<> |    ",
+      "   / __` \\   ",
+      "  ( /  \\ {|  ",
+      "  /\\ __)/,)  ",
+      " (}\\____\\/   ",
+      "             ",
+    ],
+    "OpenBSD" => [
+      "      _____      ",
+      "    \\-     -/    ",
+      " \\_/ .`  ,   \\   ",
+      " | ,    , 0 0 |  ",
+      " |_  <   }  3 }  ",
+      " / \\`   . `  /   ",
+      "    /-_____-\\    ",
+      "                 ",
+    ],
+    "NetBSD" => [
+      "                       ",
+      " \\\\\\`-______,----__    ",
+      "  \\\\  -  _  __,---\\`_  ",
+      "   \\\\  ,  . \\`.____    ",
+      "    \\\\-______,----\\`-  ",
+      "     \\\\                ",
+      "      \\\\               ",
+      "       \\\\              ",
+      "                       ",
+    ],
+    "FreeBSD" => [
+      "                ",
+      " /\\.-^^^^^-./\\  ",
+      " \\_)       (_/  ",
+      " |           |  ",
+      " |           |  ",
+      "  ;         ;   ",
+      "   '-_____-'    ",
+      "                ",
+    ],
+    "FreeBSDTrident" => [
+      "                ",
+      " /\\.-^^^^^-./\\  ",
+      " \\_)  ,.,  (_/  ",
+      " |     W     |  ",
+      " |     |     |  ",
+      "  ;    |    ;   ",
+      "   '-_____-'    ",
+      "                ",
+    ],
+    "GhostBSD" => [
+      "            ",
+      "    _____   ",
+      "   / __  )  ",
+      "  ( /_/ /   ",
+      "  _\\_, /    ",
+      " \\____/     ",
+      "            ",
+      "            ",
+    ],
+    "GhostBSDGhost" => [
+      "   _______   ",
+      "  /       \\  ",
+      "  | () () |  ",
+      "  |       |  ",
+      "  |   3   |  ",
+      "  /       \\  ",
+      "  ^^^^^^^^^  ",
+      "              ",
+    ],
+  }
+
+  COLORS = (30..37).map { |c| "\e[#{c}m" }
+
+  BOLD = "\e[1m"
+  RESET = "\e[0m"
+  
   def self.run
     options = OptionHandler.parse
 
@@ -251,106 +342,13 @@ module Main
       results[key] = value
     end
 
-    # variables for formatting
-    # styles
-    bold = "\e[1m"
-    reset = "\e[0m"
-
-    # colors
-    colors = (30..37).map { |c| "\e[#{c}m" }
-
     # labels
     label = ["USER", "OS", "SHELL", "VER", "CPU", "MEM"]
     # set lowercase if lowercase
     label = label.map(&.downcase) if options.lowercase
 
-    # ASCII art
-    ascii_art = {
-      "None" => Array.new(7, "  "),
-      "Tear" => [
-        "         ",
-        "    ,    ",
-        "   / \\   ",
-        "  /   \\  ",
-        " |     | ",
-        "  \\___/  ",
-        "         ",
-      ],
-      "Linux" => [
-        "     ___     ",
-        "    [..,|    ",
-        "    [<> |    ",
-        "   / __` \\   ",
-        "  ( /  \\ {|  ",
-        "  /\\ __)/,)  ",
-        " (}\\____\\/   ",
-        "             ",
-      ],
-      "OpenBSD" => [
-        "      _____      ",
-        "    \\-     -/    ",
-        " \\_/ .`  ,   \\   ",
-        " | ,    , 0 0 |  ",
-        " |_  <   }  3 }  ",
-        " / \\`   . `  /   ",
-        "    /-_____-\\    ",
-        "                 ",
-      ],
-      "NetBSD" => [
-        "                       ",
-        " \\\\\\`-______,----__    ",
-        "  \\\\  -  _  __,---\\`_  ",
-        "   \\\\  ,  . \\`.____    ",
-        "    \\\\-______,----\\`-  ",
-        "     \\\\                ",
-        "      \\\\               ",
-        "       \\\\              ",
-        "                       ",
-      ],
-      "FreeBSD" => [
-        "                ",
-        " /\\.-^^^^^-./\\  ",
-        " \\_)       (_/  ",
-        " |           |  ",
-        " |           |  ",
-        "  ;         ;   ",
-        "   '-_____-'    ",
-        "                ",
-      ],
-      "FreeBSDTrident" => [
-        "                ",
-        " /\\.-^^^^^-./\\  ",
-        " \\_)  ,.,  (_/  ",
-        " |     W     |  ",
-        " |     |     |  ",
-        "  ;    |    ;   ",
-        "   '-_____-'    ",
-        "                ",
-      ],
-      "GhostBSD" => [
-        "            ",
-        "    _____   ",
-        "   / __  )  ",
-        "  ( /_/ /   ",
-        "  _\\_, /    ",
-        " \\____/     ",
-        "            ",
-        "            ",
-      ],
-      "GhostBSDGhost" => [
-        "   _______   ",
-        "  /       \\  ",
-        "  | () () |  ",
-        "  |       |  ",
-        "  |   3   |  ",
-        "  /       \\  ",
-        "  ^^^^^^^^^  ",
-        "              ",
-      ],
-    }
-
     # get chosen ascii art
-    chosen_ascii = ascii_art[options.ascii]
+    chosen_ascii = ASCII_ART[options.ascii]
 
     # get the maximum width of the labels
     max_label_width = label.map(&.size).max
@@ -360,15 +358,15 @@ module Main
     (0...max_lines).map do |index|
       ascii_line = chosen_ascii.fetch(index, " " * chosen_ascii[0].size)
       info_line = {
-        1 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[0], "#{results["user"]}@#{results["host"]}"],
-        2 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[1], results["os"]],
-        3 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[2], results["shell"]],
-        4 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[3], results["release"]],
-        5 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[4], results["cpu"]],
-        6 => "#{bold}#{colors[options.color]}%-#{max_label_width}s#{reset}#{options.separator}%s" % [label[5], "#{results["mem_usage"]} MiB / #{results["mem"]} MiB"],
+        1 => "#{BOLD}#{COLORS[options.color]}%-#{max_label_width}s#{RESET}#{options.separator}%s" % [label[0], "#{results["user"]}@#{results["host"]}"],
+        2 => "#{BOLD}#{COLORS[options.color]}%-#{max_label_width}s#{RESET}#{options.separator}%s" % [label[1], results["os"]],
+        3 => "#{BOLD}#{COLORS[options.color]}%-#{max_label_width}s#{RESET}#{options.separator}%s" % [label[2], results["shell"]],
+        4 => "#{BOLD}#{COLORS[options.color]}%-#{max_label_width}s#{RESET}#{options.separator}%s" % [label[3], results["release"]],
+        5 => "#{BOLD}#{COLORS[options.color]}%-#{max_label_width}s#{RESET}#{options.separator}%s" % [label[4], results["cpu"]],
+        6 => "#{BOLD}#{COLORS[options.color]}%-#{max_label_width}s#{RESET}#{options.separator}%s" % [label[5], "#{results["mem_usage"]} MiB / #{results["mem"]} MiB"],
       }.fetch(index, "")
 
-      "#{colors[options.color]}#{ascii_line}#{reset}#{info_line}"
+      "#{COLORS[options.color]}#{ascii_line}#{RESET}#{info_line}"
     end.each { |line| puts line }
 
     puts "" # Add newline padding at the bottom
