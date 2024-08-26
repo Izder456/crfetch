@@ -30,7 +30,7 @@ module Resource
     release_file = "/etc/os-release"
     uname = self.uname("")
     if File.file?(release_file)
-      name = self.scrape_file("PRETTY_NAME", release_file)
+      name = self.scrape_file("PRETTY_NAME", release_file).strip
     else
       name = ""
     end
@@ -43,16 +43,16 @@ module Resource
 
     case get_platform
     when /BSD/
-      kernel_version = `sysctl -n kern.osrelease`
+      kernel_version = `sysctl -n kern.osrelease`.strip
     else
-      kernel_version = self.uname("-r")
+      kernel_version = self.uname("-r").strip
     end
 
     if File.file?(release_file)
-      distro_version = self.scrape_file("VERSION_ID", release_file)
+      distro_version = self.scrape_file("VERSION_ID", release_file).strip
       "#{kernel_version} #{distro_version}"
     else
-      kernel_version
+      kernel_version.strip
     end
   end
 
